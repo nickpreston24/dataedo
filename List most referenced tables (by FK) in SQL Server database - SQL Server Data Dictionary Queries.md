@@ -19,15 +19,15 @@ If you visited a fortune teller at least once in the past 12 months we highly re
 ## Query
 
 ```
-<span>select</span> schema_name(tab.schema_id) + <span>'.'</span> + tab.name <span>as</span> [<span>table</span>],
-   <span>count</span>(fk.name) <span>as</span> [<span>references</span>],
-   <span>count</span>(<span>distinct</span> fk.parent_object_id) <span>as</span> referencing_tables
-<span>from</span> sys.tables <span>as</span> tab
-   <span>left</span> <span>join</span> sys.foreign_keys <span>as</span> fk
-       <span>on</span> tab.object_id = fk.referenced_object_id
-<span>group</span> <span>by</span> schema_name(tab.schema_id), tab.name
-<span>having</span> <span>count</span>(fk.name) &gt; <span>0</span>
-<span>order</span> <span>by</span> <span>2</span> <span>desc</span>
+select schema_name(tab.schema_id) + '.' + tab.name as [table],
+   count(fk.name) as [references],
+   count(distinct fk.parent_object_id) as referencing_tables
+from sys.tables as tab
+   left join sys.foreign_keys as fk
+       on tab.object_id = fk.referenced_object_id
+group by schema_name(tab.schema_id), tab.name
+having count(fk.name) &gt; 0
+order by 2 desc
 ```
 
 ## Columns

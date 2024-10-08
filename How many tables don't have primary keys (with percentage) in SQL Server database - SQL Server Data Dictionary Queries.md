@@ -5,22 +5,22 @@
 ## Query
 
 ```
-<span>select</span> 
-    all_tabs.[<span>tables</span>] <span>as</span> all_tables,
-    no_pk.[<span>tables</span>] <span>as</span> no_pk_tables,
-    <span>cast</span>(<span>cast</span>(<span>100.0</span> * no_pk.[<span>tables</span>] / 
-    all_tabs.[<span>tables</span>] <span>as</span> <span>decimal</span>(<span>36</span>, <span>1</span>)) <span>as</span> <span>varchar</span>) + <span>'%'</span> <span>as</span> no_pk_percent
-<span>from</span>
-    (<span>select</span> <span>count</span>(*) <span>as</span> [<span>tables</span>]
-    <span>from</span> sys.tables tab
-        <span>left</span> <span>outer</span> <span>join</span> sys.indexes pk
-            <span>on</span> tab.object_id = pk.object_id 
-            <span>and</span> pk.is_primary_key = <span>1</span>
-    <span>where</span> pk.object_id <span>is</span> <span>null</span>) <span>as</span> no_pk
-<span>inner</span> <span>join</span> 
-    (<span>select</span> <span>count</span>(*) <span>as</span> [<span>tables</span>]
-    <span>from</span> sys.tables) <span>as</span> all_tabs
-<span>on</span> <span>1</span> = <span>1</span>
+select 
+    all_tabs.[tables] as all_tables,
+    no_pk.[tables] as no_pk_tables,
+    cast(cast(100.0 * no_pk.[tables] / 
+    all_tabs.[tables] as decimal(36, 1)) as varchar) + '%' as no_pk_percent
+from
+    (select count(*) as [tables]
+    from sys.tables tab
+        left outer join sys.indexes pk
+            on tab.object_id = pk.object_id 
+            and pk.is_primary_key = 1
+    where pk.object_id is null) as no_pk
+inner join 
+    (select count(*) as [tables]
+    from sys.tables) as all_tabs
+on 1 = 1
 ```
 
 ## Columns

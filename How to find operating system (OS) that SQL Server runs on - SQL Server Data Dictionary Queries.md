@@ -5,10 +5,10 @@ This query returns information on operating system SQL Server database runs on.
 ## Query
 
 ```
-<span>select</span> host_platform <span>as</span> os_type,
-       host_distribution <span>as</span> os,
-       host_release <span>as</span> <span>version</span>
-<span>from</span> sys.dm_os_host_info;
+select host_platform as os_type,
+       host_distribution as os,
+       host_release as version
+from sys.dm_os_host_info;
 ```
 
 ## Columns

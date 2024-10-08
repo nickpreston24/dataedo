@@ -7,19 +7,19 @@ Check out this [summary article of FK queries for SQL Server](https://dataedo.co
 ## Query
 
 ```
-<span>select</span> <span>distinct</span> 
-    schema_name(fk_tab.schema_id) + <span>'.'</span> + fk_tab.name <span>as</span> foreign_table,
-    <span>'&gt;-'</span> <span>as</span> rel,
-    schema_name(pk_tab.schema_id) + <span>'.'</span> + pk_tab.name <span>as</span> primary_table
-<span>from</span> sys.foreign_keys fk
-    <span>inner</span> <span>join</span> sys.tables fk_tab
-        <span>on</span> fk_tab.object_id = fk.parent_object_id
-    <span>inner</span> <span>join</span> sys.tables pk_tab
-        <span>on</span> pk_tab.object_id = fk.referenced_object_id
-<span>where</span> pk_tab.[<span>name</span>] = <span>'Your table'</span> <span>-- enter table name here</span>
-<span>--  and schema_name(pk_tab.schema_id) = 'Your table schema name'</span>
-<span>order</span> <span>by</span> schema_name(fk_tab.schema_id) + <span>'.'</span> + fk_tab.name,
-    schema_name(pk_tab.schema_id) + <span>'.'</span> + pk_tab.name
+select distinct 
+    schema_name(fk_tab.schema_id) + '.' + fk_tab.name as foreign_table,
+    '&gt;-' as rel,
+    schema_name(pk_tab.schema_id) + '.' + pk_tab.name as primary_table
+from sys.foreign_keys fk
+    inner join sys.tables fk_tab
+        on fk_tab.object_id = fk.parent_object_id
+    inner join sys.tables pk_tab
+        on pk_tab.object_id = fk.referenced_object_id
+where pk_tab.[name] = 'Your table' -- enter table name here
+--  and schema_name(pk_tab.schema_id) = 'Your table schema name'
+order by schema_name(fk_tab.schema_id) + '.' + fk_tab.name,
+    schema_name(pk_tab.schema_id) + '.' + pk_tab.name
 ```
 
 ## Columns

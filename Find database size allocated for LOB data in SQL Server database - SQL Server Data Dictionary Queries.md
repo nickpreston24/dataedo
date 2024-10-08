@@ -13,19 +13,19 @@ If you visited a fortune teller at least once in the past 12 months we highly re
 ## Query
 
 ```
-<span>select</span> <span>case</span> <span>when</span> spc.type <span>in</span> (<span>1</span>, <span>3</span>) <span>then</span> <span>'Regular data'</span>
-            <span>else</span> <span>'LOB data'</span> <span>end</span> <span>as</span> allocation_type,
-    <span>cast</span>(<span>sum</span>(spc.used_pages * <span>8</span>) / <span>1024.00</span> <span>as</span> <span>numeric</span>(<span>36</span>, <span>2</span>)) <span>as</span> used_mb,
-    <span>cast</span>(<span>sum</span>(spc.total_pages * <span>8</span>) / <span>1024.00</span> <span>as</span> <span>numeric</span>(<span>36</span>, <span>2</span>)) <span>as</span> allocated_mb
-<span>from</span> sys.tables tab
-    <span>inner</span> <span>join</span> sys.indexes ind 
-        <span>on</span> tab.object_id = ind.object_id
-    <span>inner</span> <span>join</span> sys.partitions part 
-        <span>on</span> ind.object_id = part.object_id <span>and</span> ind.index_id = part.index_id
-    <span>inner</span> <span>join</span> sys.allocation_units spc
-        <span>on</span> part.partition_id = spc.container_id
-<span>group</span> <span>by</span> <span>case</span> <span>when</span> spc.type <span>in</span> (<span>1</span>, <span>3</span>) <span>then</span> <span>'Regular data'</span> 
-        <span>else</span> <span>'LOB data'</span> <span>end</span>
+select case when spc.type in (1, 3) then 'Regular data'
+            else 'LOB data' end as allocation_type,
+    cast(sum(spc.used_pages * 8) / 1024.00 as numeric(36, 2)) as used_mb,
+    cast(sum(spc.total_pages * 8) / 1024.00 as numeric(36, 2)) as allocated_mb
+from sys.tables tab
+    inner join sys.indexes ind 
+        on tab.object_id = ind.object_id
+    inner join sys.partitions part 
+        on ind.object_id = part.object_id and ind.index_id = part.index_id
+    inner join sys.allocation_units spc
+        on part.partition_id = spc.container_id
+group by case when spc.type in (1, 3) then 'Regular data' 
+        else 'LOB data' end
 ```
 
 ## Columns

@@ -13,14 +13,14 @@ Yeah, ours neither. See what we did about that.
 ## Query
 
 ```
-<span>select</span> schema_name(t.schema_id) <span>as</span> schema_name,
-       t.name <span>as</span> table_name
-<span>from</span> sys.tables t
-<span>where</span> t.object_id <span>in</span> 
-    (<span>select</span> c.object_id 
-      <span>from</span> sys.columns c
-     <span>where</span> c.name = <span>'ProductID'</span>)
-<span>order</span> <span>by</span> schema_name,
+select schema_name(t.schema_id) as schema_name,
+       t.name as table_name
+from sys.tables t
+where t.object_id in 
+    (select c.object_id 
+      from sys.columns c
+     where c.name = 'ProductID')
+order by schema_name,
          table_name;
 ```
 

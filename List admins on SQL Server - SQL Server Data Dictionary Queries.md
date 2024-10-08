@@ -11,18 +11,18 @@ If you visited a fortune teller at least once in the past 12 months we highly re
 ## Query
 
 ```
-<span>select</span> mp.name <span>as</span> login,
-       <span>case</span> <span>when</span> mp.is_disabled = <span>1</span> <span>then</span> <span>'Disabled'</span>
-            <span>else</span> <span>'Enabled'</span>
-            <span>end</span> <span>as</span> <span>status</span>,
-      mp.type_desc <span>as</span> <span>type</span>
-<span>from</span> sys.server_role_members srp 
-<span>join</span> sys.server_principals mp 
-     <span>on</span> mp.principal_id = srp.member_principal_id
-<span>join</span> sys.server_principals rp 
-     <span>on</span> rp.principal_id = srp.role_principal_id
-<span>where</span> rp.name = <span>'sysadmin'</span>
-<span>order</span> <span>by</span> mp.name;
+select mp.name as login,
+       case when mp.is_disabled = 1 then 'Disabled'
+            else 'Enabled'
+            end as status,
+      mp.type_desc as type
+from sys.server_role_members srp 
+join sys.server_principals mp 
+     on mp.principal_id = srp.member_principal_id
+join sys.server_principals rp 
+     on rp.principal_id = srp.role_principal_id
+where rp.name = 'sysadmin'
+order by mp.name;
 ```
 
 ## Columns

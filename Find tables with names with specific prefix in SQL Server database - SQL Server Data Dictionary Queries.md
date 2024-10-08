@@ -5,11 +5,11 @@ Query below finds tables which names start with specific prefix, e.g. tables wit
 ## Query
 
 ```
-<span>select</span> schema_name(t.schema_id) <span>as</span> schema_name,
-       t.name <span>as</span> table_name
-<span>from</span> sys.tables t
-<span>where</span> t.name <span>like</span> <span>'hr%'</span>
-<span>order</span> <span>by</span> table_name,
+select schema_name(t.schema_id) as schema_name,
+       t.name as table_name
+from sys.tables t
+where t.name like 'hr%'
+order by table_name,
          schema_name;
 ```
 

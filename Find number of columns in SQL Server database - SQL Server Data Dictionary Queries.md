@@ -11,15 +11,15 @@ Yeah, ours neither. See what we did about that.
 ## Query
 
 ```
-<span>select</span> [<span>columns</span>], 
-    [<span>tables</span>], 
-    <span>CONVERT</span>(<span>DECIMAL</span>(<span>10</span>,<span>2</span>),<span>1.0</span>*[<span>columns</span>]/[<span>tables</span>]) <span>as</span> average_column_count
-<span>from</span> (
-    <span>select</span> <span>count</span>(*) [<span>columns</span>],
-           <span>count</span>(<span>distinct</span> schema_name(tab.schema_id) + tab.name) <span>as</span> [<span>tables</span>]
-       <span>from</span> sys.tables <span>as</span> tab
-            <span>inner</span> <span>join</span> sys.columns <span>as</span> <span>col</span>
-                <span>on</span> tab.object_id = col.object_id
+select [columns], 
+    [tables], 
+    CONVERT(DECIMAL(10,2),1.0*[columns]/[tables]) as average_column_count
+from (
+    select count(*) [columns],
+           count(distinct schema_name(tab.schema_id) + tab.name) as [tables]
+       from sys.tables as tab
+            inner join sys.columns as col
+                on tab.object_id = col.object_id
 ) q
 ```
 

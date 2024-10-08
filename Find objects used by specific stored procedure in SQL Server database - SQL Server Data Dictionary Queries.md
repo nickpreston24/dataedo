@@ -11,19 +11,19 @@ If you visited a fortune teller at least once in the past 12 months we highly re
 ## Query
 
 ```
-<span>select</span> schema_name(obj.schema_id) <span>as</span> schema_name,
-       obj.name <span>as</span> procedure_name,
-       schema_name(dep_obj.schema_id) <span>as</span> referenced_object_schema,
-       dep_obj.name <span>as</span> referenced_object_name,
-       dep_obj.type_desc <span>as</span> object_type
-<span>from</span> sys.objects obj
-<span>left</span> <span>join</span> sys.sql_expression_dependencies dep
-          <span>on</span> dep.referencing_id = obj.object_id
-<span>left</span> <span>join</span> sys.objects dep_obj
-          <span>on</span> dep_obj.object_id = dep.referenced_id
-<span>where</span> obj.type <span>in</span> (<span>'P'</span>, <span>'X'</span>, <span>'PC'</span>, <span>'RF'</span>)
-    <span>--  and obj.name = 'procedure_name'  -- put procedure name here</span>
-<span>order</span> <span>by</span> schema_name,
+select schema_name(obj.schema_id) as schema_name,
+       obj.name as procedure_name,
+       schema_name(dep_obj.schema_id) as referenced_object_schema,
+       dep_obj.name as referenced_object_name,
+       dep_obj.type_desc as object_type
+from sys.objects obj
+left join sys.sql_expression_dependencies dep
+          on dep.referencing_id = obj.object_id
+left join sys.objects dep_obj
+          on dep_obj.object_id = dep.referenced_id
+where obj.type in ('P', 'X', 'PC', 'RF')
+    --  and obj.name = 'procedure_name'  -- put procedure name here
+order by schema_name,
          procedure_name;
 ```
 

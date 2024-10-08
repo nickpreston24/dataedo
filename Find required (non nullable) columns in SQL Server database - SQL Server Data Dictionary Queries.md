@@ -5,20 +5,20 @@ Query below lists all non-nullable columns in a database.
 ## Query
 
 ```
-<span>select</span> schema_name(tab.schema_id) <span>as</span> schema_name,
-    tab.name <span>as</span> table_name, 
+select schema_name(tab.schema_id) as schema_name,
+    tab.name as table_name, 
     col.column_id,
-    col.name <span>as</span> column_name,
-    t.name <span>as</span> data_type,
+    col.name as column_name,
+    t.name as data_type,
     col.max_length,
     col.precision
-<span>from</span> sys.tables <span>as</span> tab
-    <span>inner</span> <span>join</span> sys.columns <span>as</span> <span>col</span>
-        <span>on</span> tab.object_id = col.object_id
-    <span>left</span> <span>join</span> sys.types <span>as</span> t
-    <span>on</span> col.user_type_id = t.user_type_id
-<span>where</span> col.is_nullable = <span>0</span>
-<span>order</span> <span>by</span> schema_name,
+from sys.tables as tab
+    inner join sys.columns as col
+        on tab.object_id = col.object_id
+    left join sys.types as t
+    on col.user_type_id = t.user_type_id
+where col.is_nullable = 0
+order by schema_name,
     table_name, 
     column_name;
 ```

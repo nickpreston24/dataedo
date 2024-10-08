@@ -11,16 +11,16 @@ If you visited a fortune teller at least once in the past 12 months we highly re
 ## Query
 
 ```
-<span>select</span> schema_name(t.schema_id) + <span>'.'</span> + t.name <span>as</span> [<span>table</span>],
+select schema_name(t.schema_id) + '.' + t.name as [table],
        c.column_id,
-       c.name <span>as</span> column_name,
-       type_name(user_type_id) <span>as</span> data_type,
+       c.name as column_name,
+       type_name(user_type_id) as data_type,
        is_xml_document
-<span>from</span> sys.columns c
-<span>join</span> sys.tables t
-     <span>on</span> t.object_id = c.object_id
-<span>where</span> type_name(user_type_id) <span>in</span> (<span>'xml'</span>)
-<span>order</span> <span>by</span> [<span>table</span>],
+from sys.columns c
+join sys.tables t
+     on t.object_id = c.object_id
+where type_name(user_type_id) in ('xml')
+order by [table],
          c.column_id;
 ```
 

@@ -13,16 +13,16 @@ Query below returns list of users in current database.
 ## Query
 
 ```
-<span>select</span> <span>name</span> <span>as</span> username,
+select name as username,
        create_date,
        modify_date,
-       type_desc <span>as</span> <span>type</span>,
-       authentication_type_desc <span>as</span> authentication_type
-<span>from</span> sys.database_principals
-<span>where</span> <span>type</span> <span>not</span> <span>in</span> (<span>'A'</span>, <span>'G'</span>, <span>'R'</span>, <span>'X'</span>)
-      <span>and</span> <span>sid</span> <span>is</span> <span>not</span> <span>null</span>
-      <span>and</span> <span>name</span> != <span>'guest'</span>
-<span>order</span> <span>by</span> username;
+       type_desc as type,
+       authentication_type_desc as authentication_type
+from sys.database_principals
+where type not in ('A', 'G', 'R', 'X')
+      and sid is not null
+      and name != 'guest'
+order by username;
 ```
 
 ## Columns

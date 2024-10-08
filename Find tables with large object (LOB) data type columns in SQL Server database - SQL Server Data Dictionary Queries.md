@@ -7,19 +7,19 @@ Query below lists all **tables** that cointain columns with LOB data types.
 ## Query
 
 ```
-<span>select</span> t.table_schema <span>as</span> schema_name,
+select t.table_schema as schema_name,
     t.table_name, 
-    <span>count</span>(*) <span>as</span> <span>columns</span>
-<span>from</span> information_schema.columns c
-    <span>inner</span> <span>join</span> INFORMATION_SCHEMA.tables t
-        <span>on</span> c.TABLE_SCHEMA = t.TABLE_SCHEMA
-        <span>and</span> c.TABLE_NAME = t.TABLE_NAME
-<span>where</span> t.TABLE_TYPE = <span>'BASE TABLE'</span> 
-<span>and</span> ((c.data_type <span>in</span> (<span>'VARCHAR'</span>, <span>'NVARCHAR'</span>) <span>and</span> c.character_maximum_length = <span>-1</span>)
-<span>or</span> data_type <span>in</span> (<span>'TEXT'</span>, <span>'NTEXT'</span>, <span>'IMAGE'</span>, <span>'VARBINARY'</span>, <span>'XML'</span>, <span>'FILESTREAM'</span>))
-<span>group</span> <span>by</span> t.table_schema, 
+    count(*) as columns
+from information_schema.columns c
+    inner join INFORMATION_SCHEMA.tables t
+        on c.TABLE_SCHEMA = t.TABLE_SCHEMA
+        and c.TABLE_NAME = t.TABLE_NAME
+where t.TABLE_TYPE = 'BASE TABLE' 
+and ((c.data_type in ('VARCHAR', 'NVARCHAR') and c.character_maximum_length = -1)
+or data_type in ('TEXT', 'NTEXT', 'IMAGE', 'VARBINARY', 'XML', 'FILESTREAM'))
+group by t.table_schema, 
     t.table_name
-<span>order</span> <span>by</span> t.table_schema, 
+order by t.table_schema, 
     t.table_name
 ```
 

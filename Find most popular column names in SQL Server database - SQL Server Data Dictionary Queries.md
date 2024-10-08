@@ -11,16 +11,16 @@ Yeah, ours neither. See what we did about that.
 ## Query
 
 ```
-<span>select</span> col.name <span>as</span> column_name,
-      <span>count</span>(*) <span>as</span> <span>tables</span>,
-      <span>cast</span>(<span>100.0</span> * <span>count</span>(*) / 
-      (<span>select</span> <span>count</span>(*) <span>from</span> sys.tables) <span>as</span> <span>numeric</span>(<span>36</span>, <span>1</span>)) <span>as</span> percent_tables
-   <span>from</span> sys.tables <span>as</span> tab
-       <span>inner</span> <span>join</span> sys.columns <span>as</span> <span>col</span> 
-       <span>on</span> tab.object_id = col.object_id
-<span>group</span> <span>by</span> col.name 
-<span>having</span> <span>count</span>(*) &gt; <span>1</span>
-<span>order</span> <span>by</span> <span>count</span>(*) <span>desc</span>
+select col.name as column_name,
+      count(*) as tables,
+      cast(100.0 * count(*) / 
+      (select count(*) from sys.tables) as numeric(36, 1)) as percent_tables
+   from sys.tables as tab
+       inner join sys.columns as col 
+       on tab.object_id = col.object_id
+group by col.name 
+having count(*) &gt; 1
+order by count(*) desc
 ```
 
 ## Columns

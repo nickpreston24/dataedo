@@ -11,27 +11,27 @@ If you visited a fortune teller at least once in the past 12 months we highly re
 ## Query
 
 ```
-<span>select</span> schema_name(tab.schema_id) + <span>'.'</span> + tab.name <span>as</span> [<span>table</span>],
-    trig.name <span>as</span> trigger_name,
-    <span>case</span> <span>when</span> is_instead_of_trigger = <span>1</span> <span>then</span> <span>'Instead of'</span>
-        <span>else</span> <span>'After'</span> <span>end</span> <span>as</span> [activation],
-    (<span>case</span> <span>when</span> objectproperty(trig.object_id, <span>'ExecIsUpdateTrigger'</span>) = <span>1</span> 
-            <span>then</span> <span>'Update '</span> <span>else</span> <span>''</span> <span>end</span>
-    + <span>case</span> <span>when</span> objectproperty(trig.object_id, <span>'ExecIsDeleteTrigger'</span>) = <span>1</span> 
-            <span>then</span> <span>'Delete '</span> <span>else</span> <span>''</span> <span>end</span>
-    + <span>case</span> <span>when</span> objectproperty(trig.object_id, <span>'ExecIsInsertTrigger'</span>) = <span>1</span> 
-            <span>then</span> <span>'Insert '</span> <span>else</span> <span>''</span> <span>end</span>
-    ) <span>as</span> [<span>event</span>],
-    <span>case</span> <span>when</span> trig.[<span>type</span>] = <span>'TA'</span> <span>then</span> <span>'Assembly (CLR) trigger'</span>
-        <span>when</span> trig.[<span>type</span>] = <span>'TR'</span> <span>then</span> <span>'SQL trigger'</span> 
-        <span>else</span> <span>''</span> <span>end</span> <span>as</span> [<span>type</span>],
-    <span>case</span> <span>when</span> is_disabled = <span>1</span> <span>then</span> <span>'Disabled'</span>
-        <span>else</span> <span>'Active'</span> <span>end</span> <span>as</span> [<span>status</span>],
-    object_definition(trig.object_id) <span>as</span> [definition]
-<span>from</span> sys.triggers trig
-    <span>inner</span> <span>join</span> sys.objects tab
-        <span>on</span> trig.parent_id = tab.object_id
-<span>order</span> <span>by</span> schema_name(tab.schema_id) + <span>'.'</span> + tab.name, trig.name;
+select schema_name(tab.schema_id) + '.' + tab.name as [table],
+    trig.name as trigger_name,
+    case when is_instead_of_trigger = 1 then 'Instead of'
+        else 'After' end as [activation],
+    (case when objectproperty(trig.object_id, 'ExecIsUpdateTrigger') = 1 
+            then 'Update ' else '' end
+    + case when objectproperty(trig.object_id, 'ExecIsDeleteTrigger') = 1 
+            then 'Delete ' else '' end
+    + case when objectproperty(trig.object_id, 'ExecIsInsertTrigger') = 1 
+            then 'Insert ' else '' end
+    ) as [event],
+    case when trig.[type] = 'TA' then 'Assembly (CLR) trigger'
+        when trig.[type] = 'TR' then 'SQL trigger' 
+        else '' end as [type],
+    case when is_disabled = 1 then 'Disabled'
+        else 'Active' end as [status],
+    object_definition(trig.object_id) as [definition]
+from sys.triggers trig
+    inner join sys.objects tab
+        on trig.parent_id = tab.object_id
+order by schema_name(tab.schema_id) + '.' + tab.name, trig.name;
 ```
 
 ## Columns

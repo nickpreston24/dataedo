@@ -17,25 +17,25 @@ If you visited a fortune teller at least once in the past 12 months we highly re
 ## Query
 
 ```
-<span>select</span> <span>count</span>(*) [table_count],
-    <span>sum</span>(<span>case</span> <span>when</span> fks.cnt + refs.cnt = <span>0</span> <span>then</span> <span>1</span> <span>else</span> <span>0</span> <span>end</span>) 
-    <span>as</span> [loner_tables],
-    <span>cast</span>(<span>cast</span>(<span>100.0</span> * <span>sum</span>(<span>case</span> <span>when</span> fks.cnt + refs.cnt = <span>0</span> <span>then</span> <span>1</span> <span>else</span> <span>0</span> <span>end</span>) 
-    / <span>count</span>(*) <span>as</span> <span>decimal</span>(<span>36</span>, <span>1</span>)) <span>as</span> <span>varchar</span>) + <span>'%'</span> <span>as</span> [loner_ratio]
-<span>from</span> (<span>select</span> schema_name(tab.schema_id) + <span>'.'</span> + tab.name <span>as</span> tab,
-        <span>count</span>(fk.name) cnt
-    <span>from</span> sys.tables <span>as</span> tab
-        <span>left</span> <span>join</span> sys.foreign_keys <span>as</span> fk
-            <span>on</span> tab.object_id = fk.parent_object_id
-    <span>group</span> <span>by</span> schema_name(tab.schema_id), tab.name) fks
-    <span>inner</span> <span>join</span> 
-    (<span>select</span> schema_name(tab.schema_id) + <span>'.'</span> + tab.name <span>as</span> tab,
-        <span>count</span>(fk.name) cnt
-    <span>from</span> sys.tables <span>as</span> tab
-        <span>left</span> <span>join</span> sys.foreign_keys <span>as</span> fk
-            <span>on</span> tab.object_id = fk.referenced_object_id
-    <span>group</span> <span>by</span> schema_name(tab.schema_id), tab.name) refs
-    <span>on</span> fks.tab = refs.tab
+select count(*) [table_count],
+    sum(case when fks.cnt + refs.cnt = 0 then 1 else 0 end) 
+    as [loner_tables],
+    cast(cast(100.0 * sum(case when fks.cnt + refs.cnt = 0 then 1 else 0 end) 
+    / count(*) as decimal(36, 1)) as varchar) + '%' as [loner_ratio]
+from (select schema_name(tab.schema_id) + '.' + tab.name as tab,
+        count(fk.name) cnt
+    from sys.tables as tab
+        left join sys.foreign_keys as fk
+            on tab.object_id = fk.parent_object_id
+    group by schema_name(tab.schema_id), tab.name) fks
+    inner join 
+    (select schema_name(tab.schema_id) + '.' + tab.name as tab,
+        count(fk.name) cnt
+    from sys.tables as tab
+        left join sys.foreign_keys as fk
+            on tab.object_id = fk.referenced_object_id
+    group by schema_name(tab.schema_id), tab.name) refs
+    on fks.tab = refs.tab
 ```
 
 ## Columns

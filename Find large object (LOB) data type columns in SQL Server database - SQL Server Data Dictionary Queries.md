@@ -13,18 +13,18 @@ If you visited a fortune teller at least once in the past 12 months we highly re
 ## Query
 
 ```
-<span>select</span> t.table_schema <span>as</span> schema_name,
+select t.table_schema as schema_name,
     t.table_name, 
     c.column_name,
     c.data_type
-<span>from</span> information_schema.columns c
-    <span>inner</span> <span>join</span> information_schema.tables t
-        <span>on</span> c.table_schema = t.table_schema
-        <span>and</span> c.table_name = t.table_name
-<span>where</span> t.table_type = <span>'BASE TABLE'</span> 
-<span>and</span> ((c.data_type <span>in</span> (<span>'VARCHAR'</span>, <span>'NVARCHAR'</span>) <span>and</span> character_maximum_length = <span>-1</span>)
-<span>or</span> c.data_type <span>in</span> (<span>'TEXT'</span>, <span>'NTEXT'</span>, <span>'IMAGE'</span>, <span>'VARBINARY'</span>, <span>'XML'</span>, <span>'FILESTREAM'</span>))
-<span>order</span> <span>by</span> t.table_schema, 
+from information_schema.columns c
+    inner join information_schema.tables t
+        on c.table_schema = t.table_schema
+        and c.table_name = t.table_name
+where t.table_type = 'BASE TABLE' 
+and ((c.data_type in ('VARCHAR', 'NVARCHAR') and character_maximum_length = -1)
+or c.data_type in ('TEXT', 'NTEXT', 'IMAGE', 'VARBINARY', 'XML', 'FILESTREAM'))
+order by t.table_schema, 
     t.table_name,
     c.column_name
 ```

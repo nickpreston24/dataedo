@@ -11,31 +11,31 @@ If you visited a fortune teller at least once in the past 12 months we highly re
 ## Query
 
 ```
-<span>select</span> schema_name(obj.schema_id) +  <span>'.'</span> + obj.name
-        + <span>case</span> <span>when</span> referenced_minor_id = <span>0</span> <span>then</span> <span>''</span>
-               <span>else</span> <span>'.'</span> + col.name <span>end</span> <span>as</span> referenced_object,
-       <span>'referenced by'</span> <span>as</span> <span>'ref'</span>,
-       schema_name(ref_obj.schema_id) <span>as</span> referencing_schema,
-       ref_obj.name <span>as</span> referencing_object_name,
-       <span>case</span> <span>when</span> ref_obj.type_desc = <span>'USER_TABLE'</span> 
-                 <span>and</span> dep.referencing_minor_id != <span>0</span>
-            <span>then</span> <span>'COLUMN'</span>
-            <span>else</span> ref_obj.type_desc <span>end</span> <span>as</span> referencing_object_type,
-       ref_col.name <span>as</span> referencing_column
-<span>from</span> sys.sql_expression_dependencies dep
-<span>join</span> sys.objects obj
-     <span>on</span> obj.object_id = dep.referenced_id
-<span>left</span> <span>join</span> sys.columns <span>col</span>
-     <span>on</span> col.object_id = dep.referenced_id
-     <span>and</span> col.column_id = dep.referenced_minor_id
-<span>join</span> sys.objects ref_obj
-     <span>on</span> ref_obj.object_id = dep.referencing_id
-<span>left</span> <span>join</span> sys.columns ref_col
-     <span>on</span> ref_col.object_id = dep.referencing_id
-     <span>and</span> ref_col.column_id = dep.referencing_minor_id
-<span>where</span> schema_name(obj.schema_id) = <span>'Sales'</span>  <span>-- put object schema name here</span>
-      <span>and</span> obj.name = <span>'SalesOrderHeader'</span>     <span>-- put object name here</span>
-<span>order</span> <span>by</span> referencing_schema,
+select schema_name(obj.schema_id) +  '.' + obj.name
+        + case when referenced_minor_id = 0 then ''
+               else '.' + col.name end as referenced_object,
+       'referenced by' as 'ref',
+       schema_name(ref_obj.schema_id) as referencing_schema,
+       ref_obj.name as referencing_object_name,
+       case when ref_obj.type_desc = 'USER_TABLE' 
+                 and dep.referencing_minor_id != 0
+            then 'COLUMN'
+            else ref_obj.type_desc end as referencing_object_type,
+       ref_col.name as referencing_column
+from sys.sql_expression_dependencies dep
+join sys.objects obj
+     on obj.object_id = dep.referenced_id
+left join sys.columns col
+     on col.object_id = dep.referenced_id
+     and col.column_id = dep.referenced_minor_id
+join sys.objects ref_obj
+     on ref_obj.object_id = dep.referencing_id
+left join sys.columns ref_col
+     on ref_col.object_id = dep.referencing_id
+     and ref_col.column_id = dep.referencing_minor_id
+where schema_name(obj.schema_id) = 'Sales'  -- put object schema name here
+      and obj.name = 'SalesOrderHeader'     -- put object name here
+order by referencing_schema,
          referencing_object_name;
 ```
 

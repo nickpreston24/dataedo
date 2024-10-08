@@ -11,18 +11,18 @@ Yeah, ours neither. See what we did about that.
 ## Query
 
 ```
-<span>select</span> schema_name(tab.schema_id) + <span>'.'</span> + tab.name <span>as</span> [<span>table</span>], 
-    <span>cast</span>(<span>sum</span>(spc.used_pages * <span>8</span>)/<span>1024.00</span> <span>as</span> <span>numeric</span>(<span>36</span>, <span>2</span>)) <span>as</span> used_mb,
-    <span>cast</span>(<span>sum</span>(spc.total_pages * <span>8</span>)/<span>1024.00</span> <span>as</span> <span>numeric</span>(<span>36</span>, <span>2</span>)) <span>as</span> allocated_mb
-<span>from</span> sys.tables tab
-    <span>inner</span> <span>join</span> sys.indexes ind 
-        <span>on</span> tab.object_id = ind.object_id
-    <span>inner</span> <span>join</span> sys.partitions part 
-        <span>on</span> ind.object_id = part.object_id <span>and</span> ind.index_id = part.index_id
-    <span>inner</span> <span>join</span> sys.allocation_units spc
-        <span>on</span> part.partition_id = spc.container_id
-<span>group</span> <span>by</span> schema_name(tab.schema_id) + <span>'.'</span> + tab.name
-<span>order</span> <span>by</span> <span>sum</span>(spc.used_pages) <span>desc</span>
+select schema_name(tab.schema_id) + '.' + tab.name as [table], 
+    cast(sum(spc.used_pages * 8)/1024.00 as numeric(36, 2)) as used_mb,
+    cast(sum(spc.total_pages * 8)/1024.00 as numeric(36, 2)) as allocated_mb
+from sys.tables tab
+    inner join sys.indexes ind 
+        on tab.object_id = ind.object_id
+    inner join sys.partitions part 
+        on ind.object_id = part.object_id and ind.index_id = part.index_id
+    inner join sys.allocation_units spc
+        on part.partition_id = spc.container_id
+group by schema_name(tab.schema_id) + '.' + tab.name
+order by sum(spc.used_pages) desc
 ```
 
 ## Columns

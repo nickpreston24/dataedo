@@ -11,18 +11,18 @@ Yeah, ours neither. See what we did about that.
 ## Query
 
 ```
-<span>select</span> schema_name(v.schema_id) <span>as</span> schema_name,
-       v.name <span>as</span> view_name,
-       i.name <span>as</span> index_name,
+select schema_name(v.schema_id) as schema_name,
+       v.name as view_name,
+       i.name as index_name,
        m.definition
-<span>from</span> sys.views v
-<span>join</span> sys.indexes i
-     <span>on</span> i.object_id = v.object_id
-     <span>and</span> i.index_id = <span>1</span>
-     <span>and</span> i.ignore_dup_key = <span>0</span>
-<span>join</span> sys.sql_modules m
-     <span>on</span> m.object_id = v.object_id
-<span>order</span> <span>by</span> schema_name,
+from sys.views v
+join sys.indexes i
+     on i.object_id = v.object_id
+     and i.index_id = 1
+     and i.ignore_dup_key = 0
+join sys.sql_modules m
+     on m.object_id = v.object_id
+order by schema_name,
          view_name;
 ```
 

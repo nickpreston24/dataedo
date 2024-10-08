@@ -12,37 +12,37 @@ See also:
 ## Query
 
 ```
-<br><span>select</span> tab <span>as</span> [<span>table</span>],
-    <span>count</span>(<span>distinct</span> rel_name) <span>as</span> relationships,
-    <span>count</span>(<span>distinct</span> fk_name) <span>as</span> foreign_keys,
-    <span>count</span>(<span>distinct</span> ref_name) <span>as</span> [<span>references</span>],
-    <span>count</span>(<span>distinct</span> rel_object_id) <span>as</span> related_tables,
-    <span>count</span>(<span>distinct</span> referenced_object_id) <span>as</span> referenced_tables,
-    <span>count</span>(<span>distinct</span> parent_object_id) <span>as</span> referencing_tables
-<span>from</span> 
-    (<span>select</span> schema_name(tab.schema_id) + <span>'.'</span> + tab.name <span>as</span> tab,
-        fk.name <span>as</span> rel_name,
-        fk.referenced_object_id <span>as</span> rel_object_id,
-        fk.name <span>as</span> fk_name,
+select tab as [table],
+    count(distinct rel_name) as relationships,
+    count(distinct fk_name) as foreign_keys,
+    count(distinct ref_name) as [references],
+    count(distinct rel_object_id) as related_tables,
+    count(distinct referenced_object_id) as referenced_tables,
+    count(distinct parent_object_id) as referencing_tables
+from 
+    (select schema_name(tab.schema_id) + '.' + tab.name as tab,
+        fk.name as rel_name,
+        fk.referenced_object_id as rel_object_id,
+        fk.name as fk_name,
         fk.referenced_object_id,
-        <span>null</span> <span>as</span> ref_name,
-        <span>null</span> <span>as</span> parent_object_id
-    <span>from</span> sys.tables <span>as</span> tab
-        <span>left</span> <span>join</span> sys.foreign_keys <span>as</span> fk
-            <span>on</span> tab.object_id = fk.parent_object_id
-    <span>union</span> all
-    <span>select</span> schema_name(tab.schema_id) + <span>'.'</span> + tab.name <span>as</span> tab,
-        fk.name <span>as</span> rel_name,
-        fk.parent_object_id <span>as</span> rel_object_id,
-        <span>null</span> <span>as</span> fk_name,
-        <span>null</span> <span>as</span> referenced_object_id,
-        fk.name <span>as</span> ref_name,
+        null as ref_name,
+        null as parent_object_id
+    from sys.tables as tab
+        left join sys.foreign_keys as fk
+            on tab.object_id = fk.parent_object_id
+    union all
+    select schema_name(tab.schema_id) + '.' + tab.name as tab,
+        fk.name as rel_name,
+        fk.parent_object_id as rel_object_id,
+        null as fk_name,
+        null as referenced_object_id,
+        fk.name as ref_name,
         fk.parent_object_id
-    <span>from</span> sys.tables <span>as</span> tab
-        <span>left</span> <span>join</span> sys.foreign_keys <span>as</span> fk
-            <span>on</span> tab.object_id = fk.referenced_object_id) q
-<span>group</span> <span>by</span> tab
-<span>order</span> <span>by</span> <span>count</span>(<span>distinct</span> rel_name) <span>desc</span>
+    from sys.tables as tab
+        left join sys.foreign_keys as fk
+            on tab.object_id = fk.referenced_object_id) q
+group by tab
+order by count(distinct rel_name) desc
 ```
 
 ## Columns

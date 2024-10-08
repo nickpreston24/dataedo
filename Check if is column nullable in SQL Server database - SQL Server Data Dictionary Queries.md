@@ -11,17 +11,17 @@ If you visited a fortune teller at least once in the past 12 months we highly re
 ## Query
 
 ```
-<span>select</span> schema_name(t.schema_id) <span>as</span> schema_name,
-       t.name <span>as</span> table_name,
-       c.name <span>as</span> column_name,
-       <span>case</span> is_nullable
-            <span>when</span> <span>0</span> <span>then</span> <span>'NOT NULLABLE'</span>
-            <span>else</span> <span>'NULLABLE'</span>
-            <span>end</span> <span>as</span> nullable
-<span>from</span> sys.columns c
-<span>join</span> sys.tables t
-     <span>on</span> t.object_id = c.object_id
-<span>order</span> <span>by</span> schema_name,
+select schema_name(t.schema_id) as schema_name,
+       t.name as table_name,
+       c.name as column_name,
+       case is_nullable
+            when 0 then 'NOT NULLABLE'
+            else 'NULLABLE'
+            end as nullable
+from sys.columns c
+join sys.tables t
+     on t.object_id = c.object_id
+order by schema_name,
          table_name,
          column_name;
 ```

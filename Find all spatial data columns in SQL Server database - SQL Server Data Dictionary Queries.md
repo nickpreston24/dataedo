@@ -5,15 +5,15 @@ The query below lists all columns with spatial data types.
 ### Query
 
 ```
-<span>select</span> schema_name(t.schema_id) + <span>'.'</span> + t.name <span>as</span> [<span>table</span>],
+select schema_name(t.schema_id) + '.' + t.name as [table],
        c.column_id,
-       c.name <span>as</span> column_name,
-       type_name(user_type_id) <span>as</span> data_type
-<span>from</span> sys.columns c
-<span>join</span> sys.tables t
-     <span>on</span> t.object_id = c.object_id
-<span>where</span> type_name(user_type_id) <span>in</span> (<span>'geometry'</span>, <span>'geography'</span>)
-<span>order</span> <span>by</span> [<span>table</span>],
+       c.name as column_name,
+       type_name(user_type_id) as data_type
+from sys.columns c
+join sys.tables t
+     on t.object_id = c.object_id
+where type_name(user_type_id) in ('geometry', 'geography')
+order by [table],
          c.column_id;
 ```
 

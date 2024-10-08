@@ -11,28 +11,28 @@ If you visited a fortune teller at least once in the past 12 months we highly re
 ## Query
 
 ```
-<span>select</span> <span>isnull</span>(schema1.table_name, schema2.table_name) <span>as</span> [<span>table</span>],
-       <span>isnull</span>(schema1.column_name, schema2.column_name) <span>as</span> [<span>column</span>],
-       schema1.column_name <span>as</span> database1,
-       schema2.column_name <span>as</span> database2
-<span>from</span>
-(<span>select</span> tab.name <span>as</span> table_name, 
-        col.name <span>as</span> column_name
- <span>from</span> sys.tables <span>as</span> tab
- <span>join</span> sys.columns <span>as</span> <span>col</span>
-      <span>on</span> tab.object_id = col.object_id
- <span>where</span> schema_name(tab.schema_id) = <span>'schema_1'</span>) schema1
-<span>full</span> <span>join</span>
-(<span>select</span> tab.name <span>as</span> table_name, 
-        col.name <span>as</span> column_name
- <span>from</span> sys.tables <span>as</span> tab
- <span>join</span> sys.columns <span>as</span> <span>col</span>
-      <span>on</span> tab.object_id = col.object_id
- <span>where</span> schema_name(tab.schema_id) = <span>'schema_2'</span>) schema2
-<span>on</span> schema1.table_name = schema2.table_name
-<span>and</span> schema1.column_name = schema2.column_name
-<span>where</span> (schema1.column_name <span>is</span> <span>null</span> <span>or</span> schema2.column_name <span>is</span> <span>null</span>)
-<span>order</span> <span>by</span> <span>1</span>, <span>2</span>, <span>3</span>
+select isnull(schema1.table_name, schema2.table_name) as [table],
+       isnull(schema1.column_name, schema2.column_name) as [column],
+       schema1.column_name as database1,
+       schema2.column_name as database2
+from
+(select tab.name as table_name, 
+        col.name as column_name
+ from sys.tables as tab
+ join sys.columns as col
+      on tab.object_id = col.object_id
+ where schema_name(tab.schema_id) = 'schema_1') schema1
+full join
+(select tab.name as table_name, 
+        col.name as column_name
+ from sys.tables as tab
+ join sys.columns as col
+      on tab.object_id = col.object_id
+ where schema_name(tab.schema_id) = 'schema_2') schema2
+on schema1.table_name = schema2.table_name
+and schema1.column_name = schema2.column_name
+where (schema1.column_name is null or schema2.column_name is null)
+order by 1, 2, 3
 ```
 
 ## Instruction

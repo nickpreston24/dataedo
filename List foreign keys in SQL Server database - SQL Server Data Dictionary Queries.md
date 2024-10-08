@@ -13,27 +13,27 @@ Yeah, ours neither. See what we did about that.
 ## Query
 
 ```
-<span>select</span> schema_name(fk_tab.schema_id) + <span>'.'</span> + fk_tab.name <span>as</span> foreign_table,
-    <span>'&gt;-'</span> <span>as</span> rel,
-    schema_name(pk_tab.schema_id) + <span>'.'</span> + pk_tab.name <span>as</span> primary_table,
-    <span>substring</span>(column_names, <span>1</span>, <span>len</span>(column_names)<span>-1</span>) <span>as</span> [fk_columns],
-    fk.name <span>as</span> fk_constraint_name
-<span>from</span> sys.foreign_keys fk
-    <span>inner</span> <span>join</span> sys.tables fk_tab
-        <span>on</span> fk_tab.object_id = fk.parent_object_id
-    <span>inner</span> <span>join</span> sys.tables pk_tab
-        <span>on</span> pk_tab.object_id = fk.referenced_object_id
-    <span>cross</span> <span>apply</span> (<span>select</span> col.[<span>name</span>] + <span>', '</span>
-                    <span>from</span> sys.foreign_key_columns fk_c
-                        <span>inner</span> <span>join</span> sys.columns <span>col</span>
-                            <span>on</span> fk_c.parent_object_id = col.object_id
-                            <span>and</span> fk_c.parent_column_id = col.column_id
-                    <span>where</span> fk_c.parent_object_id = fk_tab.object_id
-                      <span>and</span> fk_c.constraint_object_id = fk.object_id
-                            <span>order</span> <span>by</span> col.column_id
-                            <span>for</span> <span>xml</span> <span>path</span> (<span>''</span>) ) D (column_names)
-<span>order</span> <span>by</span> schema_name(fk_tab.schema_id) + <span>'.'</span> + fk_tab.name,
-    schema_name(pk_tab.schema_id) + <span>'.'</span> + pk_tab.name
+select schema_name(fk_tab.schema_id) + '.' + fk_tab.name as foreign_table,
+    '&gt;-' as rel,
+    schema_name(pk_tab.schema_id) + '.' + pk_tab.name as primary_table,
+    substring(column_names, 1, len(column_names)-1) as [fk_columns],
+    fk.name as fk_constraint_name
+from sys.foreign_keys fk
+    inner join sys.tables fk_tab
+        on fk_tab.object_id = fk.parent_object_id
+    inner join sys.tables pk_tab
+        on pk_tab.object_id = fk.referenced_object_id
+    cross apply (select col.[name] + ', '
+                    from sys.foreign_key_columns fk_c
+                        inner join sys.columns col
+                            on fk_c.parent_object_id = col.object_id
+                            and fk_c.parent_column_id = col.column_id
+                    where fk_c.parent_object_id = fk_tab.object_id
+                      and fk_c.constraint_object_id = fk.object_id
+                            order by col.column_id
+                            for xml path ('') ) D (column_names)
+order by schema_name(fk_tab.schema_id) + '.' + fk_tab.name,
+    schema_name(pk_tab.schema_id) + '.' + pk_tab.name
 ```
 
 ## Columns

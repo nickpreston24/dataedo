@@ -11,24 +11,24 @@ Yeah, ours neither. See what we did about that.
 ## Query
 
 ```
-<span>select</span> schema_name(obj.schema_id) <span>as</span> schema_name,
-       obj.name <span>as</span> procedure_name,
-       <span>case</span> <span>type</span>
-            <span>when</span> <span>'P'</span> <span>then</span> <span>'SQL Stored Procedure'</span>
-            <span>when</span> <span>'X'</span> <span>then</span> <span>'Extended stored procedure'</span>
-        <span>end</span> <span>as</span> <span>type</span>,
-        <span>substring</span>(par.parameters, <span>0</span>, <span>len</span>(par.parameters)) <span>as</span> <span>parameters</span>,
+select schema_name(obj.schema_id) as schema_name,
+       obj.name as procedure_name,
+       case type
+            when 'P' then 'SQL Stored Procedure'
+            when 'X' then 'Extended stored procedure'
+        end as type,
+        substring(par.parameters, 0, len(par.parameters)) as parameters,
         mod.definition
-<span>from</span> sys.objects obj
-<span>join</span> sys.sql_modules <span>mod</span>
-     <span>on</span> mod.object_id = obj.object_id
-<span>cross</span> <span>apply</span> (<span>select</span> p.name + <span>' '</span> + TYPE_NAME(p.user_type_id) + <span>', '</span> 
-             <span>from</span> sys.parameters p
-             <span>where</span> p.object_id = obj.object_id 
-                   <span>and</span> p.parameter_id != <span>0</span> 
-             <span>for</span> <span>xml</span> <span>path</span> (<span>''</span>) ) par (<span>parameters</span>)
-<span>where</span> obj.type <span>in</span> (<span>'P'</span>, <span>'X'</span>)
-<span>order</span> <span>by</span> schema_name,
+from sys.objects obj
+join sys.sql_modules mod
+     on mod.object_id = obj.object_id
+cross apply (select p.name + ' ' + TYPE_NAME(p.user_type_id) + ', ' 
+             from sys.parameters p
+             where p.object_id = obj.object_id 
+                   and p.parameter_id != 0 
+             for xml path ('') ) par (parameters)
+where obj.type in ('P', 'X')
+order by schema_name,
          procedure_name;
 ```
 

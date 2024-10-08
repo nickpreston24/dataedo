@@ -11,11 +11,11 @@ Yeah, ours neither. See what we did about that.
 ## Query
 
 ```
-<span>select</span> schema_name(t.schema_id) <span>as</span> schema_name,
-       t.name <span>as</span> table_name
-<span>from</span> sys.tables t
-<span>where</span> t.name <span>like</span> <span>'%product%'</span>
-<span>order</span> <span>by</span> table_name,
+select schema_name(t.schema_id) as schema_name,
+       t.name as table_name
+from sys.tables t
+where t.name like '%product%'
+order by table_name,
          schema_name;
 ```
 

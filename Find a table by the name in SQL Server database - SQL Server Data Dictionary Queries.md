@@ -11,11 +11,11 @@ Yeah, ours neither. See what we did about that.
 ## Query
 
 ```
-<span>select</span> schema_name(t.schema_id) <span>as</span> schema_name,
-       t.name <span>as</span> table_name
-<span>from</span> sys.tables t
-<span>where</span> t.name = <span>'customer'</span>
-<span>order</span> <span>by</span> schema_name,
+select schema_name(t.schema_id) as schema_name,
+       t.name as table_name
+from sys.tables t
+where t.name = 'customer'
+order by schema_name,
          table_name;
 ```
 

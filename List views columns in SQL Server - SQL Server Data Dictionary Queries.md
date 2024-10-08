@@ -5,17 +5,17 @@ Query below lists all columns in views in SQL Server database
 ## Query
 
 ```
-<span>select</span> schema_name(v.schema_id) <span>as</span> schema_name,
-       object_name(c.object_id) <span>as</span> view_name,
+select schema_name(v.schema_id) as schema_name,
+       object_name(c.object_id) as view_name,
        c.column_id,
-       c.name <span>as</span> column_name,
-       type_name(user_type_id) <span>as</span> data_type,
+       c.name as column_name,
+       type_name(user_type_id) as data_type,
        c.max_length,
        c.precision
-<span>from</span> sys.columns c
-<span>join</span> sys.views v 
-     <span>on</span> v.object_id = c.object_id
-<span>order</span> <span>by</span> schema_name,
+from sys.columns c
+join sys.views v 
+     on v.object_id = c.object_id
+order by schema_name,
          view_name,
          column_id;
 ```

@@ -13,37 +13,37 @@ Yeah, ours neither. See what we did about that.
 ## Query
 
 ```
-<span>select</span> i.[<span>name</span>] <span>as</span> index_name,
-    <span>substring</span>(column_names, <span>1</span>, <span>len</span>(column_names)<span>-1</span>) <span>as</span> [<span>columns</span>],
-    <span>case</span> <span>when</span> i.[<span>type</span>] = <span>1</span> <span>then</span> <span>'Clustered unique index'</span>
-        <span>when</span> i.type = <span>2</span> <span>then</span> <span>'Unique index'</span>
-        <span>end</span> <span>as</span> index_type,
-    schema_name(t.schema_id) + <span>'.'</span> + t.[<span>name</span>] <span>as</span> table_view, 
-    <span>case</span> <span>when</span> t.[<span>type</span>] = <span>'U'</span> <span>then</span> <span>'Table'</span>
-        <span>when</span> t.[<span>type</span>] = <span>'V'</span> <span>then</span> <span>'View'</span>
-        <span>end</span> <span>as</span> [object_type],
-    <span>case</span> <span>when</span> c.[<span>type</span>] = <span>'PK'</span> <span>then</span> <span>'Primary key'</span>
-        <span>when</span> c.[<span>type</span>] = <span>'UQ'</span> <span>then</span> <span>'Unique constraint'</span>
-        <span>end</span> <span>as</span> constraint_type, 
-    c.[<span>name</span>] <span>as</span> constraint_name
-<span>from</span> sys.objects t
-    <span>left</span> <span>outer</span> <span>join</span> sys.indexes i
-        <span>on</span> t.object_id = i.object_id
-    <span>left</span> <span>outer</span> <span>join</span> sys.key_constraints c
-        <span>on</span> i.object_id = c.parent_object_id 
-        <span>and</span> i.index_id = c.unique_index_id
-   <span>cross</span> <span>apply</span> (<span>select</span> col.[<span>name</span>] + <span>', '</span>
-                    <span>from</span> sys.index_columns ic
-                        <span>inner</span> <span>join</span> sys.columns <span>col</span>
-                            <span>on</span> ic.object_id = col.object_id
-                            <span>and</span> ic.column_id = col.column_id
-                    <span>where</span> ic.object_id = t.object_id
-                        <span>and</span> ic.index_id = i.index_id
-                            <span>order</span> <span>by</span> col.column_id
-                            <span>for</span> <span>xml</span> <span>path</span> (<span>''</span>) ) D (column_names)
-<span>where</span> is_unique = <span>1</span>
-<span>and</span> t.is_ms_shipped &lt;&gt; <span>1</span>
-<span>order</span> <span>by</span> i.[<span>name</span>]
+select i.[name] as index_name,
+    substring(column_names, 1, len(column_names)-1) as [columns],
+    case when i.[type] = 1 then 'Clustered unique index'
+        when i.type = 2 then 'Unique index'
+        end as index_type,
+    schema_name(t.schema_id) + '.' + t.[name] as table_view, 
+    case when t.[type] = 'U' then 'Table'
+        when t.[type] = 'V' then 'View'
+        end as [object_type],
+    case when c.[type] = 'PK' then 'Primary key'
+        when c.[type] = 'UQ' then 'Unique constraint'
+        end as constraint_type, 
+    c.[name] as constraint_name
+from sys.objects t
+    left outer join sys.indexes i
+        on t.object_id = i.object_id
+    left outer join sys.key_constraints c
+        on i.object_id = c.parent_object_id 
+        and i.index_id = c.unique_index_id
+   cross apply (select col.[name] + ', '
+                    from sys.index_columns ic
+                        inner join sys.columns col
+                            on ic.object_id = col.object_id
+                            and ic.column_id = col.column_id
+                    where ic.object_id = t.object_id
+                        and ic.index_id = i.index_id
+                            order by col.column_id
+                            for xml path ('') ) D (column_names)
+where is_unique = 1
+and t.is_ms_shipped &lt;&gt; 1
+order by i.[name]
 ```
 
 ## Columns

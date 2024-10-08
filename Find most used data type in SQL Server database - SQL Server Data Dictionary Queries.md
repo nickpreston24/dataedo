@@ -11,22 +11,22 @@ If you visited a fortune teller at least once in the past 12 months we highly re
 ## Query
 
 ```
-<span>select</span> t.name <span>as</span> data_type,
-    <span>count</span>(*) <span>as</span> [<span>columns</span>],
-    <span>cast</span>(<span>100.0</span> * <span>count</span>(*) /
-    (<span>select</span> <span>count</span>(*) <span>from</span> sys.tables <span>as</span> tab <span>inner</span> <span>join</span>
-        sys.columns <span>as</span> <span>col</span> <span>on</span> tab.object_id = col.object_id)
-            <span>as</span> <span>numeric</span>(<span>36</span>, <span>1</span>)) <span>as</span> percent_columns,
-      <span>count</span>(<span>distinct</span> tab.object_id) <span>as</span> [<span>tables</span>],
-      <span>cast</span>(<span>100.0</span> * <span>count</span>(<span>distinct</span> tab.object_id) /
-      (<span>select</span> <span>count</span>(*) <span>from</span> sys.tables) <span>as</span> <span>numeric</span>(<span>36</span>, <span>1</span>)) <span>as</span> percent_tables
-  <span>from</span> sys.tables <span>as</span> tab
-       <span>inner</span> <span>join</span> sys.columns <span>as</span> <span>col</span>
-        <span>on</span> tab.object_id = col.object_id
-       <span>left</span> <span>join</span> sys.types <span>as</span> t
-        <span>on</span> col.user_type_id = t.user_type_id
-<span>group</span> <span>by</span> t.name
-<span>order</span> <span>by</span> <span>count</span>(*) <span>desc</span>
+select t.name as data_type,
+    count(*) as [columns],
+    cast(100.0 * count(*) /
+    (select count(*) from sys.tables as tab inner join
+        sys.columns as col on tab.object_id = col.object_id)
+            as numeric(36, 1)) as percent_columns,
+      count(distinct tab.object_id) as [tables],
+      cast(100.0 * count(distinct tab.object_id) /
+      (select count(*) from sys.tables) as numeric(36, 1)) as percent_tables
+  from sys.tables as tab
+       inner join sys.columns as col
+        on tab.object_id = col.object_id
+       left join sys.types as t
+        on col.user_type_id = t.user_type_id
+group by t.name
+order by count(*) desc
 ```
 
 ## Columns

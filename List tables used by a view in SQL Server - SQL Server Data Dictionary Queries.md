@@ -9,18 +9,18 @@ This query doesn't include cross database references. This query lists only refe
 ## Query
 
 ```
-<span>select</span> <span>distinct</span> schema_name(v.schema_id) <span>as</span> schema_name,
-       v.name <span>as</span> view_name,
-       schema_name(o.schema_id) <span>as</span> referenced_schema_name,
-       o.name <span>as</span> referenced_entity_name,
-       o.type_desc <span>as</span> entity_type
-<span>from</span> sys.views v
-<span>join</span> sys.sql_expression_dependencies d
-     <span>on</span> d.referencing_id = v.object_id
-     <span>and</span> d.referenced_id <span>is</span> <span>not</span> <span>null</span>
-<span>join</span> sys.objects o
-     <span>on</span> o.object_id = d.referenced_id
- <span>order</span> <span>by</span> schema_name,
+select distinct schema_name(v.schema_id) as schema_name,
+       v.name as view_name,
+       schema_name(o.schema_id) as referenced_schema_name,
+       o.name as referenced_entity_name,
+       o.type_desc as entity_type
+from sys.views v
+join sys.sql_expression_dependencies d
+     on d.referencing_id = v.object_id
+     and d.referenced_id is not null
+join sys.objects o
+     on o.object_id = d.referenced_id
+ order by schema_name,
           view_name;
 ```
 

@@ -5,26 +5,26 @@ Query below compares columns (names) in tables between two SQL Server databases.
 ## Query
 
 ```
-<span>select</span> <span>isnull</span>(db1.table_name, db2.table_name) <span>as</span> [<span>table</span>],
-       <span>isnull</span>(db1.column_name, db2.column_name) <span>as</span> [<span>column</span>],
-       db1.column_name <span>as</span> database1, 
-       db2.column_name <span>as</span> database2
-<span>from</span>
-(<span>select</span> schema_name(tab.schema_id) + <span>'.'</span> + tab.name <span>as</span> table_name, 
-       col.name <span>as</span> column_name
-   <span>from</span> [dataedo_6<span>.0</span>].sys.tables <span>as</span> tab
-        <span>inner</span> <span>join</span> [dataedo_6<span>.0</span>].sys.columns <span>as</span> <span>col</span>
-            <span>on</span> tab.object_id = col.object_id) db1
-<span>full</span> <span>outer</span> <span>join</span>
-(<span>select</span> schema_name(tab.schema_id) + <span>'.'</span> + tab.name <span>as</span> table_name, 
-       col.name <span>as</span> column_name
-   <span>from</span> [dataedo_7<span>.0</span>].sys.tables <span>as</span> tab
-        <span>inner</span> <span>join</span> [dataedo_7<span>.0</span>].sys.columns <span>as</span> <span>col</span>
-            <span>on</span> tab.object_id = col.object_id) db2
-<span>on</span> db1.table_name = db2.table_name
-<span>and</span> db1.column_name = db2.column_name
-<span>where</span> (db1.column_name <span>is</span> <span>null</span> <span>or</span> db2.column_name <span>is</span> <span>null</span>)
-<span>order</span> <span>by</span> <span>1</span>, <span>2</span>, <span>3</span>
+select isnull(db1.table_name, db2.table_name) as [table],
+       isnull(db1.column_name, db2.column_name) as [column],
+       db1.column_name as database1, 
+       db2.column_name as database2
+from
+(select schema_name(tab.schema_id) + '.' + tab.name as table_name, 
+       col.name as column_name
+   from [dataedo_6.0].sys.tables as tab
+        inner join [dataedo_6.0].sys.columns as col
+            on tab.object_id = col.object_id) db1
+full outer join
+(select schema_name(tab.schema_id) + '.' + tab.name as table_name, 
+       col.name as column_name
+   from [dataedo_7.0].sys.tables as tab
+        inner join [dataedo_7.0].sys.columns as col
+            on tab.object_id = col.object_id) db2
+on db1.table_name = db2.table_name
+and db1.column_name = db2.column_name
+where (db1.column_name is null or db2.column_name is null)
+order by 1, 2, 3
 ```
 
 ## Instruction

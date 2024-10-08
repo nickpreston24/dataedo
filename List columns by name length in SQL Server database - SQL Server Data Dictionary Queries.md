@@ -11,14 +11,14 @@ Yeah, ours neither. See what we did about that.
 ## Query
 
 ```
-<span>select</span> col.name <span>as</span> column_name,
-    <span>len</span>(col.name) <span>as</span> column_name_length,
-    schema_name(tab.schema_id) <span>as</span> schema_name,
-    tab.name <span>as</span> table_name
- <span>from</span> sys.tables <span>as</span> tab
-        <span>inner</span> <span>join</span> sys.columns <span>as</span> <span>col</span> 
-        <span>on</span> tab.object_id = col.object_id
-<span>order</span> <span>by</span> <span>len</span>(col.name) <span>desc</span>,
+select col.name as column_name,
+    len(col.name) as column_name_length,
+    schema_name(tab.schema_id) as schema_name,
+    tab.name as table_name
+ from sys.tables as tab
+        inner join sys.columns as col 
+        on tab.object_id = col.object_id
+order by len(col.name) desc,
     col.name
 ```
 

@@ -5,19 +5,19 @@ Query below returns tables in a database with space used by their indexes ordere
 ## Query
 
 ```
-<span>select</span> schema_name(tab.schema_id) + <span>'.'</span> + tab.name <span>as</span> [<span>table</span>],
-       (<span>sum</span>(spc.total_pages * <span>8</span>) / <span>1024.0</span>) <span>as</span> allocated_space,
-       (<span>sum</span>(spc.used_pages * <span>8</span>) / <span>1024.0</span>) <span>as</span> used_space
-<span>from</span> sys.tables tab
-<span>join</span> sys.indexes ind
-     <span>on</span> tab.object_id = ind.object_id
-<span>join</span> sys.partitions part
-     <span>on</span> ind.object_id = part.object_id
-     <span>and</span> ind.index_id = part.index_id
-<span>join</span> sys.allocation_units spc
-     <span>on</span> part.partition_id = spc.container_id
-<span>group</span> <span>by</span> tab.schema_id, tab.name
-<span>order</span> <span>by</span> used_space <span>desc</span>;
+select schema_name(tab.schema_id) + '.' + tab.name as [table],
+       (sum(spc.total_pages * 8) / 1024.0) as allocated_space,
+       (sum(spc.used_pages * 8) / 1024.0) as used_space
+from sys.tables tab
+join sys.indexes ind
+     on tab.object_id = ind.object_id
+join sys.partitions part
+     on ind.object_id = part.object_id
+     and ind.index_id = part.index_id
+join sys.allocation_units spc
+     on part.partition_id = spc.container_id
+group by tab.schema_id, tab.name
+order by used_space desc;
 ```
 
 ## Columns

@@ -11,32 +11,32 @@ Yeah, ours neither. See what we did about that.
 ## Query
 
 ```
-<span>select</span>
-    <span>row_count</span>,
-    <span>count</span>(*) <span>tables</span>
-<span>from</span> 
-    (<span>select</span> 
-        [<span>table</span>], 
-            <span>case</span> <span>when</span> <span>rows</span> &gt; <span>1000000000</span> <span>then</span> <span>'1b rows and more'</span>
-                <span>when</span> <span>rows</span> &gt; <span>1000000</span> <span>then</span> <span>'1m - 1b rows'</span>
-                <span>when</span> <span>rows</span> &gt; <span>1000</span> <span>then</span> <span>'1k - 1m rows'</span>
-                <span>when</span> <span>rows</span> &gt; <span>100</span> <span>then</span> <span>'100 - 1k rows'</span>
-                <span>when</span> <span>rows</span> &gt; <span>10</span> <span>then</span> <span>'10 - 100 rows'</span>
-                <span>else</span>  <span>'0 - 10 rows'</span> <span>end</span> <span>as</span> <span>row_count</span>,
-        <span>rows</span> <span>as</span> <span>sort</span>
-    <span>from</span>
+select
+    row_count,
+    count(*) tables
+from 
+    (select 
+        [table], 
+            case when rows &gt; 1000000000 then '1b rows and more'
+                when rows &gt; 1000000 then '1m - 1b rows'
+                when rows &gt; 1000 then '1k - 1m rows'
+                when rows &gt; 100 then '100 - 1k rows'
+                when rows &gt; 10 then '10 - 100 rows'
+                else  '0 - 10 rows' end as row_count,
+        rows as sort
+    from
         (
-        <span>select</span> schema_name(tab.schema_id) + <span>'.'</span> + tab.name <span>as</span> [<span>table</span>], 
-               <span>sum</span>(part.rows) <span>as</span> [<span>rows</span>]
-           <span>from</span> sys.tables tab
-                <span>inner</span> <span>join</span> sys.partitions part
-                    <span>on</span> tab.object_id = part.object_id
-        <span>where</span> part.index_id <span>IN</span> (<span>1</span>, <span>0</span>) <span>-- 0 - table without PK, 1 table with PK</span>
-        <span>group</span> <span>by</span> schema_name(tab.schema_id) + <span>'.'</span> + tab.name
+        select schema_name(tab.schema_id) + '.' + tab.name as [table], 
+               sum(part.rows) as [rows]
+           from sys.tables tab
+                inner join sys.partitions part
+                    on tab.object_id = part.object_id
+        where part.index_id IN (1, 0) -- 0 - table without PK, 1 table with PK
+        group by schema_name(tab.schema_id) + '.' + tab.name
         ) q
     ) a
-<span>group</span> <span>by</span> <span>row_count</span>
-<span>order</span> <span>by</span> <span>max</span>(<span>sort</span>)
+group by row_count
+order by max(sort)
 ```
 
 ## Columns

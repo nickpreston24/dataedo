@@ -5,22 +5,22 @@ Query below lists table check constraints.
 ## Query
 
 ```
-<span>select</span> schema_name(t.schema_id) + <span>'.'</span> + t.[<span>name</span>] <span>as</span> [<span>table</span>],
+select schema_name(t.schema_id) + '.' + t.[name] as [table],
     col.column_id,
-    col.[<span>name</span>] <span>as</span> column_name,
+    col.[name] as column_name,
     con.[definition],
-    <span>case</span> <span>when</span> con.is_disabled = <span>0</span> 
-        <span>then</span> <span>'Active'</span> 
-        <span>else</span> <span>'Disabled'</span> 
-        <span>end</span> <span>as</span> [<span>status</span>],
-    con.[<span>name</span>] <span>as</span> constraint_name
-<span>from</span> sys.check_constraints con
-    <span>left</span> <span>outer</span> <span>join</span> sys.objects t
-        <span>on</span> con.parent_object_id = t.object_id
-    <span>left</span> <span>outer</span> <span>join</span> sys.all_columns <span>col</span>
-        <span>on</span> con.parent_column_id = col.column_id
-        <span>and</span> con.parent_object_id = col.object_id
-<span>order</span> <span>by</span> schema_name(t.schema_id) + <span>'.'</span> + t.[<span>name</span>], 
+    case when con.is_disabled = 0 
+        then 'Active' 
+        else 'Disabled' 
+        end as [status],
+    con.[name] as constraint_name
+from sys.check_constraints con
+    left outer join sys.objects t
+        on con.parent_object_id = t.object_id
+    left outer join sys.all_columns col
+        on con.parent_column_id = col.column_id
+        and con.parent_object_id = col.object_id
+order by schema_name(t.schema_id) + '.' + t.[name], 
     col.column_id
 ```
 

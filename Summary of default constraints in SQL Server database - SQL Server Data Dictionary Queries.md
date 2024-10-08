@@ -11,19 +11,19 @@ Yeah, ours neither. See what we did about that.
 ## Query
 
 ```
-<span>select</span> 
-    con.[definition] <span>as</span> default_definition,
-    <span>count</span>(<span>distinct</span> t.object_id) <span>as</span> [<span>tables</span>],
-    <span>count</span>(col.column_id) <span>as</span> [<span>columns</span>]
-<span>from</span> sys.objects t
-    <span>inner</span> <span>join</span> sys.all_columns <span>col</span>
-        <span>on</span> col.object_id = t.object_id
-    <span>left</span> <span>outer</span> <span>join</span> sys.default_constraints con
-        <span>on</span> con.parent_object_id = t.object_id
-        <span>and</span> con.parent_column_id = col.column_id
-<span>where</span> t.type = <span>'U'</span>
-<span>group</span> <span>by</span> con.[definition]
-<span>order</span> <span>by</span> [<span>columns</span>] <span>desc</span>, [<span>tables</span>] <span>desc</span>
+select 
+    con.[definition] as default_definition,
+    count(distinct t.object_id) as [tables],
+    count(col.column_id) as [columns]
+from sys.objects t
+    inner join sys.all_columns col
+        on col.object_id = t.object_id
+    left outer join sys.default_constraints con
+        on con.parent_object_id = t.object_id
+        and con.parent_column_id = col.column_id
+where t.type = 'U'
+group by con.[definition]
+order by [columns] desc, [tables] desc
 ```
 
 ## Columns

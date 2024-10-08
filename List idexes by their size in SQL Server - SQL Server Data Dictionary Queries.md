@@ -11,30 +11,30 @@ Yeah, ours neither. See what we did about that.
 ## Query
 
 ```
-<span>select</span> ind.name <span>as</span> [index_name],
-    ind.type_desc <span>as</span> index_type,
-    <span>cast</span>(<span>sum</span>(spc.used_pages * <span>8</span>)/<span>1024.00</span> <span>as</span> <span>numeric</span>(<span>36</span>,<span>2</span>)) <span>as</span> used_mb,
-    <span>cast</span>(<span>sum</span>(spc.total_pages * <span>8</span>)/<span>1024.00</span> <span>as</span> <span>numeric</span>(<span>36</span>,<span>2</span>)) <span>as</span> allocated_mb,
-    <span>cast</span>(<span>sum</span>(spc.data_pages * <span>8</span>)/<span>1024.00</span> <span>as</span> <span>numeric</span>(<span>36</span>,<span>2</span>)) <span>as</span> data_space_mb,
+select ind.name as [index_name],
+    ind.type_desc as index_type,
+    cast(sum(spc.used_pages * 8)/1024.00 as numeric(36,2)) as used_mb,
+    cast(sum(spc.total_pages * 8)/1024.00 as numeric(36,2)) as allocated_mb,
+    cast(sum(spc.data_pages * 8)/1024.00 as numeric(36,2)) as data_space_mb,
     ind.is_unique,
     ind.is_primary_key,
     ind.is_unique_constraint,
-    schema_name(obj.schema_id) + <span>'.'</span> + obj.name <span>as</span> object_name,
-    obj.type_desc <span>as</span> <span>type</span>
-<span>from</span> sys.indexes ind
-<span>join</span> sys.objects obj 
-        <span>on</span> obj.object_id = ind.object_id
-        <span>and</span> obj.type <span>in</span> (<span>'U'</span>,<span>'V'</span>)
-<span>join</span> sys.partitions part 
-        <span>on</span> ind.object_id = part.object_id 
-        <span>and</span> ind.index_id = part.index_id
-<span>join</span> sys.allocation_units spc
-     <span>on</span> part.partition_id = spc.container_id
-<span>where</span> ind.index_id &gt; <span>0</span>
-<span>group</span> <span>by</span> obj.schema_id, obj.name, ind.name, ind.type_desc, 
+    schema_name(obj.schema_id) + '.' + obj.name as object_name,
+    obj.type_desc as type
+from sys.indexes ind
+join sys.objects obj 
+        on obj.object_id = ind.object_id
+        and obj.type in ('U','V')
+join sys.partitions part 
+        on ind.object_id = part.object_id 
+        and ind.index_id = part.index_id
+join sys.allocation_units spc
+     on part.partition_id = spc.container_id
+where ind.index_id &gt; 0
+group by obj.schema_id, obj.name, ind.name, ind.type_desc, 
          ind.is_unique, ind.is_primary_key, ind.is_unique_constraint, 
          obj.type_desc
-<span>order</span> <span>by</span> <span>sum</span>(spc.total_pages) <span>desc</span>;
+order by sum(spc.total_pages) desc;
 ```
 
 ## Columns

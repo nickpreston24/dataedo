@@ -19,7 +19,7 @@ Result shows active sessions on server and three of them are from my computer - 
 Now we will use session ID (spid) to kill the session (67 in our example):
 
 ```
-<span>kill</span> <span>67</span>
+kill 67
 ```
 
 ### Result

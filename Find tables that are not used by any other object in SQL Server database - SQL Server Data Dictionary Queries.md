@@ -11,13 +11,13 @@ Yeah, ours neither. See what we did about that.
 ## Query
 
 ```
-<span>select</span> schema_name(schema_id) <span>as</span> schema_name,
-       <span>name</span> <span>as</span> table_name
-<span>from</span> sys.tables tab
-<span>left</span> <span>join</span> sys.sql_expression_dependencies dep
-          <span>on</span> tab.object_id = dep.referenced_id
-<span>where</span> dep.referenced_id <span>is</span> <span>null</span>
-<span>order</span> <span>by</span> schema_name,
+select schema_name(schema_id) as schema_name,
+       name as table_name
+from sys.tables tab
+left join sys.sql_expression_dependencies dep
+          on tab.object_id = dep.referenced_id
+where dep.referenced_id is null
+order by schema_name,
          table_name;
 ```
 

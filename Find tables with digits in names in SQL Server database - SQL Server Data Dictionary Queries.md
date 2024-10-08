@@ -13,11 +13,11 @@ If you visited a fortune teller at least once in the past 12 months we highly re
 ## Query
 
 ```
-<span>select</span> schema_name(t.schema_id) <span>as</span> schema_name,
-       t.name <span>as</span> table_name
-<span>from</span> sys.tables t
-<span>where</span> t.name <span>like</span> <span>'%[0-9]%'</span>
-<span>order</span> <span>by</span> schema_name,
+select schema_name(t.schema_id) as schema_name,
+       t.name as table_name
+from sys.tables t
+where t.name like '%[0-9]%'
+order by schema_name,
          table_name;
 ```
 

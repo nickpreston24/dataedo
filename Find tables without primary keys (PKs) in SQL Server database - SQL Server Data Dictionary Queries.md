@@ -5,15 +5,15 @@ Query below lists tables in a database without primary keys.
 ## Query
 
 ```
-<span>select</span> schema_name(tab.schema_id) <span>as</span> [schema_name], 
-    tab.[<span>name</span>] <span>as</span> table_name
-<span>from</span> sys.tables tab
-    <span>left</span> <span>outer</span> <span>join</span> sys.indexes pk
-        <span>on</span> tab.object_id = pk.object_id 
-        <span>and</span> pk.is_primary_key = <span>1</span>
-<span>where</span> pk.object_id <span>is</span> <span>null</span>
-<span>order</span> <span>by</span> schema_name(tab.schema_id),
-    tab.[<span>name</span>]
+select schema_name(tab.schema_id) as [schema_name], 
+    tab.[name] as table_name
+from sys.tables tab
+    left outer join sys.indexes pk
+        on tab.object_id = pk.object_id 
+        and pk.is_primary_key = 1
+where pk.object_id is null
+order by schema_name(tab.schema_id),
+    tab.[name]
 ```
 
 ## Columns

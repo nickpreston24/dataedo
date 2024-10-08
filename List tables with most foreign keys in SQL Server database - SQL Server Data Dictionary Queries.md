@@ -13,14 +13,14 @@ See also:
 ## Query
 
 ```
-<span>select</span> schema_name(fk_tab.schema_id) + <span>'.'</span> + fk_tab.name <span>as</span> [<span>table</span>],
-    <span>count</span>(*) foreign_keys,
-    <span>count</span> (<span>distinct</span> referenced_object_id) referenced_tables
-<span>from</span> sys.foreign_keys fk
-    <span>inner</span> <span>join</span> sys.tables fk_tab
-        <span>on</span> fk_tab.object_id = fk.parent_object_id
-<span>group</span> <span>by</span> schema_name(fk_tab.schema_id) + <span>'.'</span> + fk_tab.name
-<span>order</span> <span>by</span> <span>count</span>(*) <span>desc</span>
+select schema_name(fk_tab.schema_id) + '.' + fk_tab.name as [table],
+    count(*) foreign_keys,
+    count (distinct referenced_object_id) referenced_tables
+from sys.foreign_keys fk
+    inner join sys.tables fk_tab
+        on fk_tab.object_id = fk.parent_object_id
+group by schema_name(fk_tab.schema_id) + '.' + fk_tab.name
+order by count(*) desc
 ```
 
 ## Columns

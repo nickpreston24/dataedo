@@ -13,29 +13,29 @@ Yeah, ours neither. See what we did about that.
 ## Query
 
 ```
-<span>select</span> schema_name(fk_tab.schema_id) + <span>'.'</span> + fk_tab.name <span>as</span> foreign_table,
-    <span>'&gt;-'</span> <span>as</span> rel,
-    schema_name(pk_tab.schema_id) + <span>'.'</span> + pk_tab.name <span>as</span> primary_table,
-    fk_cols.constraint_column_id <span>as</span> <span>no</span>, 
-    fk_col.name <span>as</span> fk_column_name,
-    <span>' = '</span> <span>as</span> [<span>join</span>],
-    pk_col.name <span>as</span> pk_column_name,
-    fk.name <span>as</span> fk_constraint_name
-<span>from</span> sys.foreign_keys fk
-    <span>inner</span> <span>join</span> sys.tables fk_tab
-        <span>on</span> fk_tab.object_id = fk.parent_object_id
-    <span>inner</span> <span>join</span> sys.tables pk_tab
-        <span>on</span> pk_tab.object_id = fk.referenced_object_id
-    <span>inner</span> <span>join</span> sys.foreign_key_columns fk_cols
-        <span>on</span> fk_cols.constraint_object_id = fk.object_id
-    <span>inner</span> <span>join</span> sys.columns fk_col
-        <span>on</span> fk_col.column_id = fk_cols.parent_column_id
-        <span>and</span> fk_col.object_id = fk_tab.object_id
-    <span>inner</span> <span>join</span> sys.columns pk_col
-        <span>on</span> pk_col.column_id = fk_cols.referenced_column_id
-        <span>and</span> pk_col.object_id = pk_tab.object_id
-<span>order</span> <span>by</span> schema_name(fk_tab.schema_id) + <span>'.'</span> + fk_tab.name,
-    schema_name(pk_tab.schema_id) + <span>'.'</span> + pk_tab.name, 
+select schema_name(fk_tab.schema_id) + '.' + fk_tab.name as foreign_table,
+    '&gt;-' as rel,
+    schema_name(pk_tab.schema_id) + '.' + pk_tab.name as primary_table,
+    fk_cols.constraint_column_id as no, 
+    fk_col.name as fk_column_name,
+    ' = ' as [join],
+    pk_col.name as pk_column_name,
+    fk.name as fk_constraint_name
+from sys.foreign_keys fk
+    inner join sys.tables fk_tab
+        on fk_tab.object_id = fk.parent_object_id
+    inner join sys.tables pk_tab
+        on pk_tab.object_id = fk.referenced_object_id
+    inner join sys.foreign_key_columns fk_cols
+        on fk_cols.constraint_object_id = fk.object_id
+    inner join sys.columns fk_col
+        on fk_col.column_id = fk_cols.parent_column_id
+        and fk_col.object_id = fk_tab.object_id
+    inner join sys.columns pk_col
+        on pk_col.column_id = fk_cols.referenced_column_id
+        and pk_col.object_id = pk_tab.object_id
+order by schema_name(fk_tab.schema_id) + '.' + fk_tab.name,
+    schema_name(pk_tab.schema_id) + '.' + pk_tab.name, 
     fk_cols.constraint_column_id
 ```
 

@@ -31,7 +31,7 @@ If you visit the [Docker Catalog and search for sqlserver](https://hub.docker.co
 On the other hand, Microsoft does publish an official reference image of sqlserver, but you have to do some searching for it. [Microsoft’s official Docker tutorial](https://learn.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker?view=sql-server-ver16&pivots=cs1-bash) says that they have an instance of SQL Server 2022 available:
 
 ```
-<span id="1756" data-selectable-paragraph="">sudo docker pull mcr.microsoft.com/mssql/server:2022-latest</span>
+<span id="1756" data-selectable-paragraph="">sudo docker pull mcr.microsoft.com/mssql/server:2022-latest
 ```
 
 If you keep clicking through documentation, you can find this [Microsoft SQL Server Docker hub page](https://hub.docker.com/_/microsoft-mssql-server) which lists a bunch of different versions — but none of them include full-text search. So how do you install that?
@@ -49,7 +49,7 @@ If you just want to fast-forward to the end, take a look at my resulting [Docker
 The first step in a Dockerfile is to define our starting point. We’ll do that by using Microsoft’s official 2022 SQL Server image as a **FROM** statement:
 
 ```
-<span id="2ac6" data-selectable-paragraph=""><br>FROM mcr.microsoft.com/mssql/server:2022-latest</span>
+<span id="2ac6" data-selectable-paragraph="">FROM mcr.microsoft.com/mssql/server:2022-latest
 ```
 
 ## Install CURL as user ‘root’
@@ -57,13 +57,13 @@ The first step in a Dockerfile is to define our starting point. We’ll do that 
 The next step in our script is to switch to a user with permission to run apt-get. If you don’t use this step, you won’t be able to run any installations.
 
 ```
-<span id="b44e" data-selectable-paragraph=""><br>USER root</span>
+<span id="b44e" data-selectable-paragraph="">USER root
 ```
 
 We will now install CURL, a fantastic program which lets us retrieve files from remote Internet servers. Since Microsoft publishes a package for SQL Server full-text search for Ubuntu, this is what we’ll need to do to install it.
 
 ```
-<span id="8e06" data-selectable-paragraph=""><br>RUN apt-get update<br>RUN apt-get install -yq gnupg gnupg2 gnupg1 curl apt-transport-https</span>
+<span id="8e06" data-selectable-paragraph="">RUN apt-get updateRUN apt-get install -yq gnupg gnupg2 gnupg1 curl apt-transport-https
 ```
 
 ## Add full-text search via apt-get
@@ -75,7 +75,7 @@ You do that by fetching a Microsoft package key and adding it via `apt-key` . On
 After both these steps are complete, you can then do the real action — you can `apt-get install -y mssql-server-fts`.
 
 ```
-<span id="1ef8" data-selectable-paragraph=""><br>RUN curl https://packages.microsoft.com/keys/microsoft.asc -o /var/opt/mssql/ms-key.cer<br>RUN apt-key add /var/opt/mssql/ms-key.cer<br>RUN curl https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-2022.list -o /etc/apt/sources.list.d/mssql-server-2022.list<br>RUN apt-get update<br><br><br>RUN apt-get install -y mssql-server-fts</span>
+<span id="1ef8" data-selectable-paragraph="">RUN curl https://packages.microsoft.com/keys/microsoft.asc -o /var/opt/mssql/ms-key.cerRUN apt-key add /var/opt/mssql/ms-key.cerRUN curl https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-2022.list -o /etc/apt/sources.list.d/mssql-server-2022.listRUN apt-get updateRUN apt-get install -y mssql-server-fts
 ```
 
 ## Clean up and set an entrypoint
@@ -83,7 +83,7 @@ After both these steps are complete, you can then do the real action — you can
 The final step in a Dockerfile is to do whatever cleanup is necessary — in our case, we want to remove any unnecessary apt-get leftovers remain from our installation work. Finally, we’ll set an entrypoint to make sure someone can use this SQL Server.
 
 ```
-<span id="45de" data-selectable-paragraph=""><br>RUN apt-get clean<br>RUN <span>rm</span> -rf /var/lib/apt/lists<br><br><br>ENTRYPOINT [ <span>"/opt/mssql/bin/sqlservr"</span> ]</span>
+<span id="45de" data-selectable-paragraph="">RUN apt-get cleanRUN rm -rf /var/lib/apt/listsENTRYPOINT [ "/opt/mssql/bin/sqlservr" ]
 ```
 
 ## Creating a docker compose script for this file
@@ -93,7 +93,7 @@ To begin using this script you should save this file to sqlserver-fulltext.Docke
 Here’s what a working docker compose YAML file looks like:
 
 ```
-<span id="cb0f" data-selectable-paragraph=""><span>version:</span> <span>"3.2"</span><br><span>services:</span><br><br>  <span>sqlserver:</span><br>    <span>container_name:</span> <span>sqlserver</span><br>    <span>build:</span><br>      <span>dockerfile:</span> <span>sqlserver-fulltext.Dockerfile</span><br>    <span>ports:</span><br>      <span>-</span> <span>"1433:1433"</span><br>    <span>environment:</span><br>      <span>SA_PASSWORD:</span> <span>"Some4Complex#Password"</span><br>      <span>ACCEPT_EULA:</span> <span>"Y"</span></span>
+<span id="cb0f" data-selectable-paragraph="">version: "3.2"services:  sqlserver:    container_name: sqlserver    build:      dockerfile: sqlserver-fulltext.Dockerfile    ports:      - "1433:1433"    environment:      SA_PASSWORD: "Some4Complex#Password"      ACCEPT_EULA: "Y"
 ```
 
 If you’d prefer, you can just download this directly from [my Github repository](https://github.com/tspence/docker-examples).

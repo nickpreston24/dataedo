@@ -19,28 +19,28 @@ Yeah, ours neither. See what we did about that.
 This query will not only list foreign keys that lack indexes, but also generate DDL to create them:
 
 ```
-<span>SELECT</span> 
-    fk.name <span>AS</span> foreign_key_name,
-    t_parent.name <span>AS</span> table_name,
-    <span>'CREATE NONCLUSTERED INDEX IX_'</span> + t_parent.name + <span>'_'</span> + STRING_AGG(c_parent.name, <span>'_'</span>) + <span>' ON '</span> + t_parent.name
-    + <span>' ('</span> + STRING_AGG(c_parent.name, <span>','</span>) + <span>');'</span> <span>AS</span> idx_ddl
-<span>FROM</span> 
+SELECT 
+    fk.name AS foreign_key_name,
+    t_parent.name AS table_name,
+    'CREATE NONCLUSTERED INDEX IX_' + t_parent.name + '_' + STRING_AGG(c_parent.name, '_') + ' ON ' + t_parent.name
+    + ' (' + STRING_AGG(c_parent.name, ',') + ');' AS idx_ddl
+FROM 
     sys.foreign_keys fk 
-<span>INNER</span> <span>JOIN</span> sys.foreign_key_columns fkc <span>ON</span> 
+INNER JOIN sys.foreign_key_columns fkc ON 
     fkc.constraint_object_id = fk.object_id
-<span>INNER</span> <span>JOIN</span> sys.tables t_parent <span>ON</span> 
+INNER JOIN sys.tables t_parent ON 
     t_parent.object_id = fk.parent_object_id
-<span>INNER</span> <span>JOIN</span> sys.columns c_parent <span>ON</span> 
+INNER JOIN sys.columns c_parent ON 
     fkc.parent_column_id = c_parent.column_id  
-    <span>AND</span> 
+    AND 
     c_parent.object_id = t_parent.object_id 
-<span>LEFT</span> <span>JOIN</span> sys.index_columns idx_parent <span>ON</span>
+LEFT JOIN sys.index_columns idx_parent ON
     t_parent.object_id = idx_parent.object_id
-    <span>AND</span>
+    AND
     c_parent.column_id = idx_parent.column_id
-<span>WHERE</span>
-    idx_parent.index_column_id <span>IS</span> <span>NULL</span>
-<span>GROUP</span> <span>BY</span>
+WHERE
+    idx_parent.index_column_id IS NULL
+GROUP BY
     fk.name,
     t_parent.name
 ```
@@ -52,26 +52,26 @@ This query will not only list foreign keys that lack indexes, but also generate 
 ### SQL Server before 2017
 
 ```
-<span>SELECT</span> 
-    fk.name <span>AS</span> foreign_key_name,
-    t_parent.name <span>AS</span> table_name,
-    c_parent.name <span>AS</span> column_name
-<span>FROM</span> 
+SELECT 
+    fk.name AS foreign_key_name,
+    t_parent.name AS table_name,
+    c_parent.name AS column_name
+FROM 
     sys.foreign_keys fk 
-<span>INNER</span> <span>JOIN</span> sys.foreign_key_columns fkc <span>ON</span> 
+INNER JOIN sys.foreign_key_columns fkc ON 
     fkc.constraint_object_id = fk.object_id
-<span>INNER</span> <span>JOIN</span> sys.tables t_parent <span>ON</span> 
+INNER JOIN sys.tables t_parent ON 
     t_parent.object_id = fk.parent_object_id
-<span>INNER</span> <span>JOIN</span> sys.columns c_parent <span>ON</span> 
+INNER JOIN sys.columns c_parent ON 
     fkc.parent_column_id = c_parent.column_id  
-    <span>AND</span> 
+    AND 
     c_parent.object_id = t_parent.object_id 
-<span>LEFT</span> <span>JOIN</span> sys.index_columns idx_parent <span>ON</span>
+LEFT JOIN sys.index_columns idx_parent ON
     t_parent.object_id = idx_parent.object_id
-    <span>AND</span>
+    AND
     c_parent.column_id = idx_parent.column_id
-<span>WHERE</span>
-    idx_parent.index_column_id <span>IS</span> <span>NULL</span>
+WHERE
+    idx_parent.index_column_id IS NULL
 ```
 
 **Sample results**

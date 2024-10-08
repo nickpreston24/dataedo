@@ -5,19 +5,19 @@ Query below list objects where specific function is used.
 ## Query
 
 ```
-<span>select</span> schema_name(o.schema_id) + <span>'.'</span> + o.name <span>as</span> [<span>function</span>],
-       <span>'is used by'</span> <span>as</span> <span>ref</span>,
-       schema_name(ref_o.schema_id) + <span>'.'</span> + ref_o.name <span>as</span> [<span>object</span>],
-       ref_o.type_desc <span>as</span> object_type
-<span>from</span> sys.objects o
-<span>join</span> sys.sql_expression_dependencies dep
-     <span>on</span> o.object_id = dep.referenced_id
-<span>join</span> sys.objects ref_o
-     <span>on</span> dep.referencing_id = ref_o.object_id
-<span>where</span> o.type <span>in</span> (<span>'FN'</span>, <span>'TF'</span>, <span>'IF'</span>)
-      <span>and</span> schema_name(o.schema_id) = <span>'dbo'</span>  <span>-- put schema name here</span>
-      <span>and</span> o.name = <span>'ufnLeadingZeros'</span>  <span>-- put function name here</span>
-<span>order</span> <span>by</span> [<span>object</span>];
+select schema_name(o.schema_id) + '.' + o.name as [function],
+       'is used by' as ref,
+       schema_name(ref_o.schema_id) + '.' + ref_o.name as [object],
+       ref_o.type_desc as object_type
+from sys.objects o
+join sys.sql_expression_dependencies dep
+     on o.object_id = dep.referenced_id
+join sys.objects ref_o
+     on dep.referencing_id = ref_o.object_id
+where o.type in ('FN', 'TF', 'IF')
+      and schema_name(o.schema_id) = 'dbo'  -- put schema name here
+      and o.name = 'ufnLeadingZeros'  -- put function name here
+order by [object];
 ```
 
 ## Columns

@@ -7,7 +7,7 @@ Queries below return server version, edition and system information.
 ### Query
 
 ```
-<span>select</span> @@<span>version</span> <span>as</span> <span>version</span>
+select @@version as version
 ```
 
 ### Columns
@@ -45,28 +45,28 @@ Yeah, ours neither. See what we did about that.
 ### Query
 
 ```
-<span>SELECT</span> 
-    <span>case</span> <span>when</span> <span>CONVERT</span>(sysname, SERVERPROPERTY(<span>'ProductVersion'</span>)) 
-            <span>like</span> <span>'8.0%'</span> <span>then</span> <span>'SQL Server 2000'</span>
-        <span>when</span> <span>CONVERT</span>(sysname, SERVERPROPERTY(<span>'ProductVersion'</span>)) 
-            <span>like</span> <span>'9.0%'</span> <span>then</span> <span>'SQL Server 2005'</span>
-        <span>when</span> <span>CONVERT</span>(sysname, SERVERPROPERTY(<span>'ProductVersion'</span>)) 
-            <span>like</span> <span>'10.0%'</span> <span>then</span> <span>'SQL Server 2008'</span>
-        <span>when</span> <span>CONVERT</span>(sysname, SERVERPROPERTY(<span>'ProductVersion'</span>)) 
-            <span>like</span> <span>'10.5%'</span> <span>then</span> <span>'SQL Server 2008 R2'</span>
-        <span>when</span> <span>CONVERT</span>(sysname, SERVERPROPERTY(<span>'ProductVersion'</span>)) 
-            <span>like</span> <span>'11.0%'</span> <span>then</span> <span>'SQL Server 2012'</span>
-        <span>when</span> <span>CONVERT</span>(sysname, SERVERPROPERTY(<span>'ProductVersion'</span>)) 
-            <span>like</span> <span>'12.0%'</span> <span>then</span> <span>'SQL Server 2014'</span>
-        <span>when</span> <span>CONVERT</span>(sysname, SERVERPROPERTY(<span>'ProductVersion'</span>)) 
-            <span>like</span> <span>'13.0%'</span> <span>then</span> <span>'SQL Server 2016'</span>
-        <span>when</span> <span>CONVERT</span>(sysname, SERVERPROPERTY(<span>'ProductVersion'</span>)) 
-            <span>like</span> <span>'14.0%'</span> <span>then</span> <span>'SQL Server 2017'</span>
-        <span>when</span> <span>CONVERT</span>(sysname, SERVERPROPERTY(<span>'ProductVersion'</span>)) 
-            &gt;  <span>'14.0.9'</span> <span>then</span> <span>'newer than SQL Server 2017'</span>
-        <span>else</span> <span>'unknown'</span>
-    <span>end</span> <span>as</span> [<span>version</span>],
-    SERVERPROPERTY(<span>'Edition'</span>) <span>as</span> [<span>edition</span>]
+SELECT 
+    case when CONVERT(sysname, SERVERPROPERTY('ProductVersion')) 
+            like '8.0%' then 'SQL Server 2000'
+        when CONVERT(sysname, SERVERPROPERTY('ProductVersion')) 
+            like '9.0%' then 'SQL Server 2005'
+        when CONVERT(sysname, SERVERPROPERTY('ProductVersion')) 
+            like '10.0%' then 'SQL Server 2008'
+        when CONVERT(sysname, SERVERPROPERTY('ProductVersion')) 
+            like '10.5%' then 'SQL Server 2008 R2'
+        when CONVERT(sysname, SERVERPROPERTY('ProductVersion')) 
+            like '11.0%' then 'SQL Server 2012'
+        when CONVERT(sysname, SERVERPROPERTY('ProductVersion')) 
+            like '12.0%' then 'SQL Server 2014'
+        when CONVERT(sysname, SERVERPROPERTY('ProductVersion')) 
+            like '13.0%' then 'SQL Server 2016'
+        when CONVERT(sysname, SERVERPROPERTY('ProductVersion')) 
+            like '14.0%' then 'SQL Server 2017'
+        when CONVERT(sysname, SERVERPROPERTY('ProductVersion')) 
+            &gt;  '14.0.9' then 'newer than SQL Server 2017'
+        else 'unknown'
+    end as [version],
+    SERVERPROPERTY('Edition') as [edition]
 ```
 
 ### Columns

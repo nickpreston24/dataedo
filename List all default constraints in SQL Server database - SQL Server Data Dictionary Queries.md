@@ -13,17 +13,17 @@ Yeah, ours neither. See what we did about that.
 ## Query
 
 ```
-<span>select</span> con.[<span>name</span>] <span>as</span> constraint_name,
-    schema_name(t.schema_id) + <span>'.'</span> + t.[<span>name</span>]  <span>as</span> [<span>table</span>],
-    col.[<span>name</span>] <span>as</span> column_name,
+select con.[name] as constraint_name,
+    schema_name(t.schema_id) + '.' + t.[name]  as [table],
+    col.[name] as column_name,
     con.[definition]
-<span>from</span> sys.default_constraints con
-    <span>left</span> <span>outer</span> <span>join</span> sys.objects t
-        <span>on</span> con.parent_object_id = t.object_id
-    <span>left</span> <span>outer</span> <span>join</span> sys.all_columns <span>col</span>
-        <span>on</span> con.parent_column_id = col.column_id
-        <span>and</span> con.parent_object_id = col.object_id
-<span>order</span> <span>by</span> con.name
+from sys.default_constraints con
+    left outer join sys.objects t
+        on con.parent_object_id = t.object_id
+    left outer join sys.all_columns col
+        on con.parent_column_id = col.column_id
+        and con.parent_object_id = col.object_id
+order by con.name
 ```
 
 ## Columns

@@ -7,28 +7,28 @@ Check out this [summary article of FK queries for SQL Server](https://dataedo.co
 ## Query
 
 ```
-<span>select</span> schema_name(tab.schema_id) + <span>'.'</span> + tab.name <span>as</span> [<span>table</span>],
+select schema_name(tab.schema_id) + '.' + tab.name as [table],
     col.column_id,
-    col.name <span>as</span> column_name,
-    <span>case</span> <span>when</span> fk.object_id <span>is</span> <span>not</span> <span>null</span> <span>then</span> <span>'&gt;-'</span> <span>else</span> <span>null</span> <span>end</span> <span>as</span> rel,
-    schema_name(pk_tab.schema_id) + <span>'.'</span> + pk_tab.name <span>as</span> primary_table,
-    pk_col.name <span>as</span> pk_column_name,
-    fk_cols.constraint_column_id <span>as</span> <span>no</span>,
-    fk.name <span>as</span> fk_constraint_name
-<span>from</span> sys.tables tab
-    <span>inner</span> <span>join</span> sys.columns <span>col</span> 
-        <span>on</span> col.object_id = tab.object_id
-    <span>left</span> <span>outer</span> <span>join</span> sys.foreign_key_columns fk_cols
-        <span>on</span> fk_cols.parent_object_id = tab.object_id
-        <span>and</span> fk_cols.parent_column_id = col.column_id
-    <span>left</span> <span>outer</span> <span>join</span> sys.foreign_keys fk
-        <span>on</span> fk.object_id = fk_cols.constraint_object_id
-    <span>left</span> <span>outer</span> <span>join</span> sys.tables pk_tab
-        <span>on</span> pk_tab.object_id = fk_cols.referenced_object_id
-    <span>left</span> <span>outer</span> <span>join</span> sys.columns pk_col
-        <span>on</span> pk_col.column_id = fk_cols.referenced_column_id
-        <span>and</span> pk_col.object_id = fk_cols.referenced_object_id
-<span>order</span> <span>by</span> schema_name(tab.schema_id) + <span>'.'</span> + tab.name,
+    col.name as column_name,
+    case when fk.object_id is not null then '&gt;-' else null end as rel,
+    schema_name(pk_tab.schema_id) + '.' + pk_tab.name as primary_table,
+    pk_col.name as pk_column_name,
+    fk_cols.constraint_column_id as no,
+    fk.name as fk_constraint_name
+from sys.tables tab
+    inner join sys.columns col 
+        on col.object_id = tab.object_id
+    left outer join sys.foreign_key_columns fk_cols
+        on fk_cols.parent_object_id = tab.object_id
+        and fk_cols.parent_column_id = col.column_id
+    left outer join sys.foreign_keys fk
+        on fk.object_id = fk_cols.constraint_object_id
+    left outer join sys.tables pk_tab
+        on pk_tab.object_id = fk_cols.referenced_object_id
+    left outer join sys.columns pk_col
+        on pk_col.column_id = fk_cols.referenced_column_id
+        and pk_col.object_id = fk_cols.referenced_object_id
+order by schema_name(tab.schema_id) + '.' + tab.name,
     col.column_id
 ```
 

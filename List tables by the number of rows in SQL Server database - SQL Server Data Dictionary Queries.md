@@ -5,14 +5,14 @@ This query returns list of tables in a database with their number of rows.
 ## Query
 
 ```
-<span>select</span> schema_name(tab.schema_id) + <span>'.'</span> + tab.name <span>as</span> [<span>table</span>], 
-       <span>sum</span>(part.rows) <span>as</span> [<span>rows</span>]
-   <span>from</span> sys.tables tab
-        <span>inner</span> <span>join</span> sys.partitions part
-            <span>on</span> tab.object_id = part.object_id
-<span>where</span> part.index_id <span>IN</span> (<span>1</span>, <span>0</span>) <span>-- 0 - table without PK, 1 table with PK</span>
-<span>group</span> <span>by</span> schema_name(tab.schema_id) + <span>'.'</span> + tab.name
-<span>order</span> <span>by</span> <span>sum</span>(part.rows) <span>desc</span>
+select schema_name(tab.schema_id) + '.' + tab.name as [table], 
+       sum(part.rows) as [rows]
+   from sys.tables tab
+        inner join sys.partitions part
+            on tab.object_id = part.object_id
+where part.index_id IN (1, 0) -- 0 - table without PK, 1 table with PK
+group by schema_name(tab.schema_id) + '.' + tab.name
+order by sum(part.rows) desc
 ```
 
 ## Columns

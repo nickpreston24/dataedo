@@ -5,12 +5,12 @@ Query below finds all databases in SQL Server instance containing particular tab
 ## Query
 
 ```
-<span>select</span> [<span>name</span>] <span>as</span> [database_name] <span>from</span> sys.databases 
-<span>where</span> 
-    <span>case</span> <span>when</span> state_desc = <span>'ONLINE'</span> 
-        <span>then</span> object_id(<span>quotename</span>([<span>name</span>]) + <span>'.[dbo].[version]'</span>, <span>'U'</span>) 
-    <span>end</span> <span>is</span> <span>not</span> <span>null</span>
-<span>order</span> <span>by</span> <span>1</span>
+select [name] as [database_name] from sys.databases 
+where 
+    case when state_desc = 'ONLINE' 
+        then object_id(quotename([name]) + '.[dbo].[version]', 'U') 
+    end is not null
+order by 1
 ```
 
 ## Columns

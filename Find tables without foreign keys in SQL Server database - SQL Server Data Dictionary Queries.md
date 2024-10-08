@@ -13,14 +13,14 @@ See also:
 ## Query
 
 ```
-<span>select</span> schema_name(fk_tab.schema_id) <span>as</span> schema_name,
-    fk_tab.name <span>as</span> table_name,
-    <span>'&gt;- no FKs'</span> foreign_keys
-<span>from</span> sys.tables fk_tab
-    <span>left</span> <span>outer</span> <span>join</span> sys.foreign_keys fk
-        <span>on</span> fk_tab.object_id = fk.parent_object_id
-<span>where</span> fk.object_id <span>is</span> <span>null</span>
-<span>order</span> <span>by</span> schema_name(fk_tab.schema_id),
+select schema_name(fk_tab.schema_id) as schema_name,
+    fk_tab.name as table_name,
+    '&gt;- no FKs' foreign_keys
+from sys.tables fk_tab
+    left outer join sys.foreign_keys fk
+        on fk_tab.object_id = fk.parent_object_id
+where fk.object_id is null
+order by schema_name(fk_tab.schema_id),
     fk_tab.name
 ```
 

@@ -7,25 +7,25 @@ See also: [tables with their primary keys](https://dataedo.com/kb/query/sql-serv
 ## Query
 
 ```
-<span>select</span> schema_name(tab.schema_id) <span>as</span> [schema_name], 
-    pk.[<span>name</span>] <span>as</span> pk_name,
-    <span>substring</span>(column_names, <span>1</span>, <span>len</span>(column_names)<span>-1</span>) <span>as</span> [<span>columns</span>],
-    tab.[<span>name</span>] <span>as</span> table_name
-<span>from</span> sys.tables tab
-    <span>inner</span> <span>join</span> sys.indexes pk
-        <span>on</span> tab.object_id = pk.object_id 
-        <span>and</span> pk.is_primary_key = <span>1</span>
-   <span>cross</span> <span>apply</span> (<span>select</span> col.[<span>name</span>] + <span>', '</span>
-                    <span>from</span> sys.index_columns ic
-                        <span>inner</span> <span>join</span> sys.columns <span>col</span>
-                            <span>on</span> ic.object_id = col.object_id
-                            <span>and</span> ic.column_id = col.column_id
-                    <span>where</span> ic.object_id = tab.object_id
-                        <span>and</span> ic.index_id = pk.index_id
-                            <span>order</span> <span>by</span> col.column_id
-                            <span>for</span> <span>xml</span> <span>path</span> (<span>''</span>) ) D (column_names)
-<span>order</span> <span>by</span> schema_name(tab.schema_id),
-    pk.[<span>name</span>]
+select schema_name(tab.schema_id) as [schema_name], 
+    pk.[name] as pk_name,
+    substring(column_names, 1, len(column_names)-1) as [columns],
+    tab.[name] as table_name
+from sys.tables tab
+    inner join sys.indexes pk
+        on tab.object_id = pk.object_id 
+        and pk.is_primary_key = 1
+   cross apply (select col.[name] + ', '
+                    from sys.index_columns ic
+                        inner join sys.columns col
+                            on ic.object_id = col.object_id
+                            and ic.column_id = col.column_id
+                    where ic.object_id = tab.object_id
+                        and ic.index_id = pk.index_id
+                            order by col.column_id
+                            for xml path ('') ) D (column_names)
+order by schema_name(tab.schema_id),
+    pk.[name]
 ```
 
 ## Columns

@@ -7,7 +7,7 @@ This query returns installed product edition of the instance of SQL Server. Use 
 ### Query
 
 ```
-<span>select</span> SERVERPROPERTY(<span>'Edition'</span>) <span>as</span> [<span>edition</span>]
+select SERVERPROPERTY('Edition') as [edition]
 ```
 
 ### Columns
@@ -39,15 +39,15 @@ Returns database engine edition.
 ### Query
 
 ```
-<span>select</span>
-    <span>case</span> <span>when</span> SERVERPROPERTY(<span>'EngineEdition'</span>) = <span>1</span> <span>then</span> <span>'Personal/Desktop'</span>
-        <span>when</span> SERVERPROPERTY(<span>'EngineEdition'</span>) = <span>2</span> <span>then</span> <span>'Standard'</span>
-        <span>when</span> SERVERPROPERTY(<span>'EngineEdition'</span>) = <span>3</span> <span>then</span> <span>'Enterprise'</span>
-        <span>when</span> SERVERPROPERTY(<span>'EngineEdition'</span>) = <span>4</span> <span>then</span> <span>'Express'</span>
-        <span>when</span> SERVERPROPERTY(<span>'EngineEdition'</span>) = <span>5</span> <span>then</span> <span>'SQL Database'</span>
-        <span>when</span> SERVERPROPERTY(<span>'EngineEdition'</span>) = <span>6</span> <span>then</span> <span>'SQL Data Warehouse'</span>
-        <span>when</span> SERVERPROPERTY(<span>'EngineEdition'</span>) = <span>8</span> <span>then</span> <span>'Managed Instance'</span>
-    <span>end</span> <span>as</span> [<span>edition</span>]
+select
+    case when SERVERPROPERTY('EngineEdition') = 1 then 'Personal/Desktop'
+        when SERVERPROPERTY('EngineEdition') = 2 then 'Standard'
+        when SERVERPROPERTY('EngineEdition') = 3 then 'Enterprise'
+        when SERVERPROPERTY('EngineEdition') = 4 then 'Express'
+        when SERVERPROPERTY('EngineEdition') = 5 then 'SQL Database'
+        when SERVERPROPERTY('EngineEdition') = 6 then 'SQL Data Warehouse'
+        when SERVERPROPERTY('EngineEdition') = 8 then 'Managed Instance'
+    end as [edition]
 ```
 
 ### Columns

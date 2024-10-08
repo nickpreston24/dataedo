@@ -13,25 +13,25 @@ Check out this [summary article of FK queries for SQL Server](https://dataedo.co
 ## Query
 
 ```
-<span>select</span> <span>'No FKs &gt;-'</span> refs,
-    fks.tab <span>as</span> [<span>table</span>],
-    <span>'&gt;- no FKs'</span> fks
- <span>from</span>
-    (<span>select</span> schema_name(tab.schema_id) + <span>'.'</span> + tab.name <span>as</span> tab,
-        <span>count</span>(fk.name) <span>as</span> fk_cnt
-    <span>from</span> sys.tables <span>as</span> tab
-        <span>left</span> <span>join</span> sys.foreign_keys <span>as</span> fk
-            <span>on</span> tab.object_id = fk.parent_object_id
-    <span>group</span> <span>by</span> schema_name(tab.schema_id), tab.name) fks
-    <span>inner</span> <span>join</span> 
-    (<span>select</span> schema_name(tab.schema_id) + <span>'.'</span> + tab.name <span>as</span> tab,
-        <span>count</span>(fk.name) ref_cnt
-    <span>from</span> sys.tables <span>as</span> tab
-        <span>left</span> <span>join</span> sys.foreign_keys <span>as</span> fk
-            <span>on</span> tab.object_id = fk.referenced_object_id
-    <span>group</span> <span>by</span> schema_name(tab.schema_id), tab.name) refs
-    <span>on</span> fks.tab = refs.tab
-<span>where</span> fks.fk_cnt + refs.ref_cnt = <span>0</span>
+select 'No FKs &gt;-' refs,
+    fks.tab as [table],
+    '&gt;- no FKs' fks
+ from
+    (select schema_name(tab.schema_id) + '.' + tab.name as tab,
+        count(fk.name) as fk_cnt
+    from sys.tables as tab
+        left join sys.foreign_keys as fk
+            on tab.object_id = fk.parent_object_id
+    group by schema_name(tab.schema_id), tab.name) fks
+    inner join 
+    (select schema_name(tab.schema_id) + '.' + tab.name as tab,
+        count(fk.name) ref_cnt
+    from sys.tables as tab
+        left join sys.foreign_keys as fk
+            on tab.object_id = fk.referenced_object_id
+    group by schema_name(tab.schema_id), tab.name) refs
+    on fks.tab = refs.tab
+where fks.fk_cnt + refs.ref_cnt = 0
 ```
 
 ## Columns

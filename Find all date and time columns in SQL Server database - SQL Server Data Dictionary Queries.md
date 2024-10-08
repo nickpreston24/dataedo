@@ -5,17 +5,17 @@ Date and time in SQL Server are represented by following data types: **date**, *
 ## Query
 
 ```
-<span>select</span> schema_name(t.schema_id) + <span>'.'</span> + t.name <span>as</span> [<span>table</span>],
+select schema_name(t.schema_id) + '.' + t.name as [table],
        c.column_id,
-       c.name <span>as</span> column_name,
-       type_name(user_type_id) <span>as</span> data_type,
-       scale <span>as</span> second_scale
-<span>from</span> sys.columns c
-<span>join</span> sys.tables t
-     <span>on</span> t.object_id = c.object_id
-<span>where</span> type_name(user_type_id) <span>in</span> (<span>'date'</span>, <span>'datetimeoffset'</span>, 
-      <span>'datetime2'</span>, <span>'smalldatetime'</span>, <span>'datetime'</span>, <span>'time'</span>)
-<span>order</span> <span>by</span> [<span>table</span>],
+       c.name as column_name,
+       type_name(user_type_id) as data_type,
+       scale as second_scale
+from sys.columns c
+join sys.tables t
+     on t.object_id = c.object_id
+where type_name(user_type_id) in ('date', 'datetimeoffset', 
+      'datetime2', 'smalldatetime', 'datetime', 'time')
+order by [table],
          c.column_id;
 ```
 

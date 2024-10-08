@@ -11,14 +11,14 @@ Yeah, ours neither. See what we did about that.
 ## Query
 
 ```
-<span>select</span> <span>len</span>(col.name) <span>as</span> column_name_length,
-       <span>count</span>(*) <span>as</span> <span>columns</span>,
-       <span>count</span>(<span>distinct</span> tab.object_id) <span>as</span> <span>tables</span>
-   <span>from</span> sys.tables <span>as</span> tab
-       <span>inner</span> <span>join</span> sys.columns <span>as</span> <span>col</span> 
-       <span>on</span> tab.object_id = col.object_id
-<span>group</span> <span>by</span> <span>len</span>(col.name)
-<span>order</span> <span>by</span> <span>len</span>(col.name)
+select len(col.name) as column_name_length,
+       count(*) as columns,
+       count(distinct tab.object_id) as tables
+   from sys.tables as tab
+       inner join sys.columns as col 
+       on tab.object_id = col.object_id
+group by len(col.name)
+order by len(col.name)
 ```
 
 ## Columns

@@ -19,18 +19,18 @@ Yeah, ours neither. See what we did about that.
 ## Query
 
 ```
-<span>select</span> sp.name <span>as</span> login,
-       sp.type_desc <span>as</span> login_type,
+select sp.name as login,
+       sp.type_desc as login_type,
        sl.password_hash,
        sp.create_date,
        sp.modify_date,
-       <span>case</span> <span>when</span> sp.is_disabled = <span>1</span> <span>then</span> <span>'Disabled'</span>
-            <span>else</span> <span>'Enabled'</span> <span>end</span> <span>as</span> <span>status</span>
-<span>from</span> sys.server_principals sp
-<span>left</span> <span>join</span> sys.sql_logins sl
-          <span>on</span> sp.principal_id = sl.principal_id
-<span>where</span> sp.type <span>not</span> <span>in</span> (<span>'G'</span>, <span>'R'</span>)
-<span>order</span> <span>by</span> sp.name;
+       case when sp.is_disabled = 1 then 'Disabled'
+            else 'Enabled' end as status
+from sys.server_principals sp
+left join sys.sql_logins sl
+          on sp.principal_id = sl.principal_id
+where sp.type not in ('G', 'R')
+order by sp.name;
 ```
 
 ## Columns

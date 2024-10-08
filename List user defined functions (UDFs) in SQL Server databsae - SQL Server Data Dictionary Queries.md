@@ -5,29 +5,29 @@ Query below return all User Defined Functions and information about it in SQL Se
 ## Query
 
 ```
-<span>select</span> schema_name(obj.schema_id) <span>as</span> schema_name,
-       obj.name <span>as</span> function_name,
-       <span>case</span> <span>type</span>
-            <span>when</span> <span>'FN'</span> <span>then</span> <span>'SQL scalar function'</span>
-            <span>when</span> <span>'TF'</span> <span>then</span> <span>'SQL table-valued-function'</span>
-            <span>when</span> <span>'IF'</span> <span>then</span> <span>'SQL inline table-valued function'</span>
-        <span>end</span> <span>as</span> <span>type</span>,
-        <span>substring</span>(par.parameters, <span>0</span>, <span>len</span>(par.parameters)) <span>as</span> <span>parameters</span>,
-        TYPE_NAME(ret.user_type_id) <span>as</span> return_type,
+select schema_name(obj.schema_id) as schema_name,
+       obj.name as function_name,
+       case type
+            when 'FN' then 'SQL scalar function'
+            when 'TF' then 'SQL table-valued-function'
+            when 'IF' then 'SQL inline table-valued function'
+        end as type,
+        substring(par.parameters, 0, len(par.parameters)) as parameters,
+        TYPE_NAME(ret.user_type_id) as return_type,
         mod.definition
-<span>from</span> sys.objects obj
-<span>join</span> sys.sql_modules <span>mod</span>
-     <span>on</span> mod.object_id = obj.object_id
-<span>cross</span> <span>apply</span> (<span>select</span> p.name + <span>' '</span> + TYPE_NAME(p.user_type_id) + <span>', '</span> 
-             <span>from</span> sys.parameters p
-             <span>where</span> p.object_id = obj.object_id 
-                   <span>and</span> p.parameter_id != <span>0</span> 
-            <span>for</span> <span>xml</span> <span>path</span> (<span>''</span>) ) par (<span>parameters</span>)
-<span>left</span> <span>join</span> sys.parameters ret
-          <span>on</span> obj.object_id = ret.object_id
-          <span>and</span> ret.parameter_id = <span>0</span>
-<span>where</span> obj.type <span>in</span> (<span>'FN'</span>, <span>'TF'</span>, <span>'IF'</span>)
-<span>order</span> <span>by</span> schema_name,
+from sys.objects obj
+join sys.sql_modules mod
+     on mod.object_id = obj.object_id
+cross apply (select p.name + ' ' + TYPE_NAME(p.user_type_id) + ', ' 
+             from sys.parameters p
+             where p.object_id = obj.object_id 
+                   and p.parameter_id != 0 
+            for xml path ('') ) par (parameters)
+left join sys.parameters ret
+          on obj.object_id = ret.object_id
+          and ret.parameter_id = 0
+where obj.type in ('FN', 'TF', 'IF')
+order by schema_name,
          function_name;
 ```
 

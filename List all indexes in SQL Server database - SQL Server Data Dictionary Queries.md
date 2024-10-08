@@ -5,37 +5,37 @@ Query below lists all indexes in the database.
 ## Query
 
 ```
-<span>select</span> i.[<span>name</span>] <span>as</span> index_name,
-    <span>substring</span>(column_names, <span>1</span>, <span>len</span>(column_names)<span>-1</span>) <span>as</span> [<span>columns</span>],
-    <span>case</span> <span>when</span> i.[<span>type</span>] = <span>1</span> <span>then</span> <span>'Clustered index'</span>
-        <span>when</span> i.[<span>type</span>] = <span>2</span> <span>then</span> <span>'Nonclustered unique index'</span>
-        <span>when</span> i.[<span>type</span>] = <span>3</span> <span>then</span> <span>'XML index'</span>
-        <span>when</span> i.[<span>type</span>] = <span>4</span> <span>then</span> <span>'Spatial index'</span>
-        <span>when</span> i.[<span>type</span>] = <span>5</span> <span>then</span> <span>'Clustered columnstore index'</span>
-        <span>when</span> i.[<span>type</span>] = <span>6</span> <span>then</span> <span>'Nonclustered columnstore index'</span>
-        <span>when</span> i.[<span>type</span>] = <span>7</span> <span>then</span> <span>'Nonclustered hash index'</span>
-        <span>end</span> <span>as</span> index_type,
-    <span>case</span> <span>when</span> i.is_unique = <span>1</span> <span>then</span> <span>'Unique'</span>
-        <span>else</span> <span>'Not unique'</span> <span>end</span> <span>as</span> [<span>unique</span>],
-    schema_name(t.schema_id) + <span>'.'</span> + t.[<span>name</span>] <span>as</span> table_view, 
-    <span>case</span> <span>when</span> t.[<span>type</span>] = <span>'U'</span> <span>then</span> <span>'Table'</span>
-        <span>when</span> t.[<span>type</span>] = <span>'V'</span> <span>then</span> <span>'View'</span>
-        <span>end</span> <span>as</span> [object_type]
-<span>from</span> sys.objects t
-    <span>inner</span> <span>join</span> sys.indexes i
-        <span>on</span> t.object_id = i.object_id
-    <span>cross</span> <span>apply</span> (<span>select</span> col.[<span>name</span>] + <span>', '</span>
-                    <span>from</span> sys.index_columns ic
-                        <span>inner</span> <span>join</span> sys.columns <span>col</span>
-                            <span>on</span> ic.object_id = col.object_id
-                            <span>and</span> ic.column_id = col.column_id
-                    <span>where</span> ic.object_id = t.object_id
-                        <span>and</span> ic.index_id = i.index_id
-                            <span>order</span> <span>by</span> key_ordinal
-                            <span>for</span> <span>xml</span> <span>path</span> (<span>''</span>) ) D (column_names)
-<span>where</span> t.is_ms_shipped &lt;&gt; <span>1</span>
-<span>and</span> index_id &gt; <span>0</span>
-<span>order</span> <span>by</span> i.[<span>name</span>]
+select i.[name] as index_name,
+    substring(column_names, 1, len(column_names)-1) as [columns],
+    case when i.[type] = 1 then 'Clustered index'
+        when i.[type] = 2 then 'Nonclustered unique index'
+        when i.[type] = 3 then 'XML index'
+        when i.[type] = 4 then 'Spatial index'
+        when i.[type] = 5 then 'Clustered columnstore index'
+        when i.[type] = 6 then 'Nonclustered columnstore index'
+        when i.[type] = 7 then 'Nonclustered hash index'
+        end as index_type,
+    case when i.is_unique = 1 then 'Unique'
+        else 'Not unique' end as [unique],
+    schema_name(t.schema_id) + '.' + t.[name] as table_view, 
+    case when t.[type] = 'U' then 'Table'
+        when t.[type] = 'V' then 'View'
+        end as [object_type]
+from sys.objects t
+    inner join sys.indexes i
+        on t.object_id = i.object_id
+    cross apply (select col.[name] + ', '
+                    from sys.index_columns ic
+                        inner join sys.columns col
+                            on ic.object_id = col.object_id
+                            and ic.column_id = col.column_id
+                    where ic.object_id = t.object_id
+                        and ic.index_id = i.index_id
+                            order by key_ordinal
+                            for xml path ('') ) D (column_names)
+where t.is_ms_shipped &lt;&gt; 1
+and index_id &gt; 0
+order by i.[name]
 ```
 
 ## Columns

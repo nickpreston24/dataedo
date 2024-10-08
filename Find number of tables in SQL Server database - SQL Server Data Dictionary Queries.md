@@ -5,8 +5,8 @@ Query below returns total number of tables in current database.
 ## Query
 
 ```
-<span>select</span> <span>count</span>(*) <span>as</span> [<span>tables</span>]
-   <span>from</span> sys.tables 
+select count(*) as [tables]
+   from sys.tables 
 ```
 
 ## Columns

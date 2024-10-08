@@ -15,28 +15,28 @@ If you visited a fortune teller at least once in the past 12 months we highly re
 ## Query
 
 ```
-<span>select</span> [schema_name],
+select [schema_name],
        table_name,
-       <span>max</span>(last_access) <span>as</span> last_access
-<span>from</span>(
-    <span>select</span> schema_name(schema_id) <span>as</span> schema_name,
-           <span>name</span> <span>as</span> table_name,
-           (<span>select</span> <span>max</span>(last_access) 
-            <span>from</span> (<span>values</span>(last_user_seek),
+       max(last_access) as last_access
+from(
+    select schema_name(schema_id) as schema_name,
+           name as table_name,
+           (select max(last_access) 
+            from (values(last_user_seek),
                         (last_user_scan),
                         (last_user_lookup), 
-                        (last_user_update)) <span>as</span> tmp(last_access))
-                <span>as</span> last_access
-<span>from</span> sys.dm_db_index_usage_stats sta
-<span>join</span> sys.objects obj
-     <span>on</span> obj.object_id = sta.object_id
-     <span>and</span> obj.type = <span>'U'</span>
-     <span>and</span> sta.database_id = DB_ID()
-) <span>usage</span>
-<span>where</span> last_access &lt; <span>dateadd</span>(<span>month</span>, <span>-3</span>, <span>current_timestamp</span>)
-<span>group</span> <span>by</span> schema_name,
+                        (last_user_update)) as tmp(last_access))
+                as last_access
+from sys.dm_db_index_usage_stats sta
+join sys.objects obj
+     on obj.object_id = sta.object_id
+     and obj.type = 'U'
+     and sta.database_id = DB_ID()
+) usage
+where last_access &lt; dateadd(month, -3, current_timestamp)
+group by schema_name,
          table_name
-<span>order</span> <span>by</span> last_access <span>desc</span>;
+order by last_access desc;
 ```
 
 ## Columns

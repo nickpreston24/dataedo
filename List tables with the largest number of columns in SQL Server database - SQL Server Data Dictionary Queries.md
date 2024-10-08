@@ -11,14 +11,14 @@ If you visited a fortune teller at least once in the past 12 months we highly re
 ## Query
 
 ```
-<span>select</span> schema_name(tab.schema_id) + <span>'.'</span> + tab.name <span>as</span> [<span>table</span>], 
-       <span>count</span>(*) <span>as</span> [<span>columns</span>]
-   <span>from</span> sys.tables <span>as</span> tab
-        <span>inner</span> <span>join</span> sys.columns <span>as</span> <span>col</span>
-            <span>on</span> tab.object_id = col.object_id
-<span>group</span> <span>by</span> schema_name(tab.schema_id), 
+select schema_name(tab.schema_id) + '.' + tab.name as [table], 
+       count(*) as [columns]
+   from sys.tables as tab
+        inner join sys.columns as col
+            on tab.object_id = col.object_id
+group by schema_name(tab.schema_id), 
        tab.name
-<span>order</span> <span>by</span> <span>count</span>(*) <span>desc</span>
+order by count(*) desc
 ```
 
 ## Columns

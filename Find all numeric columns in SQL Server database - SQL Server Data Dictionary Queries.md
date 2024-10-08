@@ -5,20 +5,20 @@ Numeric in SQL Server are columns with the following data types: **tinyint**, **
 ## Query
 
 ```
-<span>select</span> schema_name(t.schema_id) + <span>'.'</span> + t.name <span>as</span> [<span>table</span>],
+select schema_name(t.schema_id) + '.' + t.name as [table],
        c.column_id,
-       c.name <span>as</span> column_name,
-       type_name(user_type_id) <span>as</span> data_type,
+       c.name as column_name,
+       type_name(user_type_id) as data_type,
        max_length,
-       <span>precision</span>,
+       precision,
        scale 
-<span>from</span> sys.columns c
-<span>join</span> sys.tables t
-     <span>on</span> t.object_id = c.object_id
-<span>where</span> type_name(user_type_id) <span>in</span> (<span>'bigint'</span>, <span>'int'</span>, 
-      <span>'smallint'</span>, <span>'tinyint'</span>, <span>'decimal'</span>, <span>'numeric'</span>,
-      <span>'smallmoney'</span>, <span>'money'</span>, <span>'bit'</span>, <span>'float'</span>, <span>'real'</span>)
-<span>order</span> <span>by</span> [<span>table</span>],
+from sys.columns c
+join sys.tables t
+     on t.object_id = c.object_id
+where type_name(user_type_id) in ('bigint', 'int', 
+      'smallint', 'tinyint', 'decimal', 'numeric',
+      'smallmoney', 'money', 'bit', 'float', 'real')
+order by [table],
          c.column_id;
 ```
 

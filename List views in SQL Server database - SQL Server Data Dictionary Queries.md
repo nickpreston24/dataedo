@@ -11,10 +11,10 @@ If you visited a fortune teller at least once in the past 12 months we highly re
 ## Query
 
 ```
-<span>select</span> schema_name(schema_id) <span>as</span> schema_name,
-       <span>name</span> <span>as</span> view_name
-<span>from</span> sys.views
-<span>order</span> <span>by</span> schema_name,
+select schema_name(schema_id) as schema_name,
+       name as view_name
+from sys.views
+order by schema_name,
          view_name;
 ```
 
