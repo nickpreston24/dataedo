@@ -1,11 +1,19 @@
-Query below lists all indexes in the database.
+Query below lists table (and view) indexes.
 
 [![](https://dataedo.com/asset/img/markdown/docs/test-article/3187eed29ce5b9127613e8a72fc11156.png)](https://dataedo.com/blog/confused-when-trying-to-work-with-databases?cta=kb-query-confused)
 
 ## Query
 
 ```
-<span>select</span> i.[<span>name</span>] <span>as</span> index_name,
+<span>select</span> schema_name(t.schema_id) + <span>'.'</span> + t.[<span>name</span>] <span>as</span> table_view, 
+    <span>case</span> <span>when</span> t.[<span>type</span>] = <span>'U'</span> <span>then</span> <span>'Table'</span>
+        <span>when</span> t.[<span>type</span>] = <span>'V'</span> <span>then</span> <span>'View'</span>
+        <span>end</span> <span>as</span> [object_type],
+    i.index_id,
+    <span>case</span> <span>when</span> i.is_primary_key = <span>1</span> <span>then</span> <span>'Primary key'</span>
+        <span>when</span> i.is_unique = <span>1</span> <span>then</span> <span>'Unique'</span>
+        <span>else</span> <span>'Not unique'</span> <span>end</span> <span>as</span> [<span>type</span>],
+    i.[<span>name</span>] <span>as</span> index_name,
     <span>substring</span>(column_names, <span>1</span>, <span>len</span>(column_names)<span>-1</span>) <span>as</span> [<span>columns</span>],
     <span>case</span> <span>when</span> i.[<span>type</span>] = <span>1</span> <span>then</span> <span>'Clustered index'</span>
         <span>when</span> i.[<span>type</span>] = <span>2</span> <span>then</span> <span>'Nonclustered unique index'</span>
@@ -14,13 +22,7 @@ Query below lists all indexes in the database.
         <span>when</span> i.[<span>type</span>] = <span>5</span> <span>then</span> <span>'Clustered columnstore index'</span>
         <span>when</span> i.[<span>type</span>] = <span>6</span> <span>then</span> <span>'Nonclustered columnstore index'</span>
         <span>when</span> i.[<span>type</span>] = <span>7</span> <span>then</span> <span>'Nonclustered hash index'</span>
-        <span>end</span> <span>as</span> index_type,
-    <span>case</span> <span>when</span> i.is_unique = <span>1</span> <span>then</span> <span>'Unique'</span>
-        <span>else</span> <span>'Not unique'</span> <span>end</span> <span>as</span> [<span>unique</span>],
-    schema_name(t.schema_id) + <span>'.'</span> + t.[<span>name</span>] <span>as</span> table_view, 
-    <span>case</span> <span>when</span> t.[<span>type</span>] = <span>'U'</span> <span>then</span> <span>'Table'</span>
-        <span>when</span> t.[<span>type</span>] = <span>'V'</span> <span>then</span> <span>'View'</span>
-        <span>end</span> <span>as</span> [object_type]
+        <span>end</span> <span>as</span> index_type
 <span>from</span> sys.objects t
     <span>inner</span> <span>join</span> sys.indexes i
         <span>on</span> t.object_id = i.object_id
@@ -31,18 +33,27 @@ Query below lists all indexes in the database.
                             <span>and</span> ic.column_id = col.column_id
                     <span>where</span> ic.object_id = t.object_id
                         <span>and</span> ic.index_id = i.index_id
-                            <span>order</span> <span>by</span> key_ordinal
+                            <span>order</span> <span>by</span> col.column_id
                             <span>for</span> <span>xml</span> <span>path</span> (<span>''</span>) ) D (column_names)
 <span>where</span> t.is_ms_shipped &lt;&gt; <span>1</span>
 <span>and</span> index_id &gt; <span>0</span>
-<span>order</span> <span>by</span> i.[<span>name</span>]
+<span>order</span> <span>by</span> schema_name(t.schema_id) + <span>'.'</span> + t.[<span>name</span>], i.index_id
 ```
 
 ## Columns
 
+-   **table\_view** - name of table or view index is defined for
+-   **object\_type** - type of object that index is defined for:
+    -   Table
+    -   View
+-   **index\_id** - id of index (unique in table)
+-   **type**
+    -   Primary key
+    -   Unique
+    -   Not unique
 -   **index\_name** - index name
 -   **columns** - list of index columns separated with ","
--   **index\_type**
+-   **index\_type** - index type:
     -   Clustered index
     -   Nonclustered unique index
     -   XML index
@@ -50,25 +61,16 @@ Query below lists all indexes in the database.
     -   Clustered columnstore index
     -   Nonclustered columnstore index
     -   Nonclustered hash index
--   **unique** - whether index is unique
-    -   Unique
-    -   Not unique
--   **table\_view** - index table or view schema and name
--   **object\_type** - type of object index is defined for:
-    -   Table
-    -   View
 
 ## Rows
 
--   **One row** represents one index
--   **Scope of rows:** all indexes in the database
--   **Ordered by** index name
+-   **One row** represents represents index
+-   **Scope of rows:** all indexes (unique and non unique) in databases
+-   **Ordered by** schema, table name, index id
 
 ## Sample results
 
-Indexes in database.
-
-![](https://dataedo.com/asset/img/kb/query/sql-server/indexes.png)
+![](https://dataedo.com/asset/img/kb/query/sql-server/table_indexes.png)
 
 ### Create beautiful and useful documentation of your SQL Server
 
