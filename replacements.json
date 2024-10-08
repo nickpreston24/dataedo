@@ -1,0 +1,5 @@
+{
+  replacements:[
+	{name: "html", find: "<\/?\w+>", replacement: "", description: "This fixes Markdownload and its weird fixation on putting spans and breaks inside of code"}
+]
+}
