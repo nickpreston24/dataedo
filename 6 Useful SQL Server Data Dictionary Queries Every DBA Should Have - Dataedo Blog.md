@@ -7,28 +7,28 @@ This query returns list of tables in a database sorted by schema and table name 
 ### Query
 
 ```
-select schema_name(tab.schema_id) as schema_name,
-       tab.name as table_name, 
-       tab.create_date as created,  
-       tab.modify_date as last_modified, 
-       p.rows as num_rows, 
-       ep.value as comments 
-  from sys.tables tab
-       inner join (select distinct 
+<span>select</span> schema_name(tab.schema_id) <span>as</span> schema_name,
+       tab.name <span>as</span> table_name, 
+       tab.create_date <span>as</span> created,  
+       tab.modify_date <span>as</span> last_modified, 
+       p.rows <span>as</span> num_rows, 
+       ep.value <span>as</span> comments 
+  <span>from</span> sys.tables tab
+       <span>inner</span> <span>join</span> (<span>select</span> <span>distinct</span> 
                           p.object_id,
-                          sum(p.rows) rows
-                     from sys.tables t
-                          inner join sys.partitions p 
-                              on p.object_id = t.object_id 
-                    group by p.object_id,
+                          <span>sum</span>(p.rows) <span>rows</span>
+                     <span>from</span> sys.tables t
+                          <span>inner</span> <span>join</span> sys.partitions p 
+                              <span>on</span> p.object_id = t.object_id 
+                    <span>group</span> <span>by</span> p.object_id,
                           p.index_id) p
-            on p.object_id = tab.object_id
-        left join sys.extended_properties ep 
-            on tab.object_id = ep.major_id
-           and ep.name = 'MS_Description'
-           and ep.minor_id = 0
-           and ep.class_desc = 'OBJECT_OR_COLUMN'
-  order by schema_name,
+            <span>on</span> p.object_id = tab.object_id
+        <span>left</span> <span>join</span> sys.extended_properties ep 
+            <span>on</span> tab.object_id = ep.major_id
+           <span>and</span> ep.name = <span>'MS_Description'</span>
+           <span>and</span> ep.minor_id = <span>0</span>
+           <span>and</span> ep.class_desc = <span>'OBJECT_OR_COLUMN'</span>
+  <span>order</span> <span>by</span> schema_name,
         table_name
 ```
 
@@ -58,21 +58,21 @@ This query returns list of database views with their definition SQL and a commen
 ### Query
 
 ```
-select schema_name(v.schema_id) as schema_name,
-       v.name as view_name,
-       v.create_date as created,
-       v.modify_date as last_modified,
+<span>select</span> schema_name(v.schema_id) <span>as</span> schema_name,
+       v.name <span>as</span> view_name,
+       v.create_date <span>as</span> created,
+       v.modify_date <span>as</span> last_modified,
        m.definition,
-       ep.value as comments
-  from sys.views v
-       left join sys.extended_properties ep 
-           on v.object_id = ep.major_id
-          and ep.name = 'MS_Description'
-          and ep.minor_id = 0
-          and ep.class_desc = 'OBJECT_OR_COLUMN'
-       inner join sys.sql_modules m 
-           on m.object_id = v.object_id
- order by schema_name,
+       ep.value <span>as</span> comments
+  <span>from</span> sys.views v
+       <span>left</span> <span>join</span> sys.extended_properties ep 
+           <span>on</span> v.object_id = ep.major_id
+          <span>and</span> ep.name = <span>'MS_Description'</span>
+          <span>and</span> ep.minor_id = <span>0</span>
+          <span>and</span> ep.class_desc = <span>'OBJECT_OR_COLUMN'</span>
+       <span>inner</span> <span>join</span> sys.sql_modules m 
+           <span>on</span> m.object_id = v.object_id
+ <span>order</span> <span>by</span> schema_name,
           view_name
 ```
 
@@ -110,140 +110,140 @@ This query returns list of tables and their columns with details.
 ### Query
 
 ```
-select schema_name(tab.schema_id) as schema_name,
-       tab.name as table_name, 
-       col.name as column_name, 
-       t.name as data_type,    
+<span>select</span> schema_name(tab.schema_id) <span>as</span> schema_name,
+       tab.name <span>as</span> table_name, 
+       col.name <span>as</span> column_name, 
+       t.name <span>as</span> data_type,    
        t.name + 
-       case when t.is_user_defined = 0 then 
-                 isnull('(' + 
-                 case when t.name in ('binary', 'char', 'nchar', 
-                           'varchar', 'nvarchar', 'varbinary') then
-                           case col.max_length 
-                                when -1 then 'MAX' 
-                                else 
-                                     case when t.name in ('nchar', 
-                                               'nvarchar') then
-                                               cast(col.max_length/2 
-                                               as varchar(4)) 
-                                          else cast(col.max_length 
-                                               as varchar(4)) 
-                                     end
-                           end
-                      when t.name in ('datetime2', 'datetimeoffset', 
-                           'time') then 
-                           cast(col.scale as varchar(4))
-                      when t.name in ('decimal', 'numeric') then
-                            cast(col.precision as varchar(4)) + ', ' +
-                            cast(col.scale as varchar(4))
-                 end + ')', '')        
-            else ':' + 
-                 (select c_t.name + 
-                         isnull('(' + 
-                         case when c_t.name in ('binary', 'char', 
-                                   'nchar', 'varchar', 'nvarchar', 
-                                   'varbinary') then 
-                                    case c.max_length 
-                                         when -1 then 'MAX' 
-                                         else   
-                                              case when t.name in 
-                                                        ('nchar', 
-                                                        'nvarchar') then 
-                                                        cast(c.max_length/2
-                                                        as varchar(4))
-                                                   else cast(c.max_length
-                                                        as varchar(4))
-                                              end
-                                    end
-                              when c_t.name in ('datetime2', 
-                                   'datetimeoffset', 'time') then 
-                                   cast(c.scale as varchar(4))
-                              when c_t.name in ('decimal', 'numeric') then
-                                   cast(c.precision as varchar(4)) + ', ' 
-                                   + cast(c.scale as varchar(4))
-                         end + ')', '') 
-                    from sys.columns as c
-                         inner join sys.types as c_t 
-                             on c.system_type_id = c_t.user_type_id
-                   where c.object_id = col.object_id
-                     and c.column_id = col.column_id
-                     and c.user_type_id = col.user_type_id
+       <span>case</span> <span>when</span> t.is_user_defined = <span>0</span> <span>then</span> 
+                 <span>isnull</span>(<span>'('</span> + 
+                 <span>case</span> <span>when</span> t.name <span>in</span> (<span>'binary'</span>, <span>'char'</span>, <span>'nchar'</span>, 
+                           <span>'varchar'</span>, <span>'nvarchar'</span>, <span>'varbinary'</span>) <span>then</span>
+                           <span>case</span> col.max_length 
+                                <span>when</span> <span>-1</span> <span>then</span> <span>'MAX'</span> 
+                                <span>else</span> 
+                                     <span>case</span> <span>when</span> t.name <span>in</span> (<span>'nchar'</span>, 
+                                               <span>'nvarchar'</span>) <span>then</span>
+                                               <span>cast</span>(col.max_length/<span>2</span> 
+                                               <span>as</span> <span>varchar</span>(<span>4</span>)) 
+                                          <span>else</span> <span>cast</span>(col.max_length 
+                                               <span>as</span> <span>varchar</span>(<span>4</span>)) 
+                                     <span>end</span>
+                           <span>end</span>
+                      <span>when</span> t.name <span>in</span> (<span>'datetime2'</span>, <span>'datetimeoffset'</span>, 
+                           <span>'time'</span>) <span>then</span> 
+                           <span>cast</span>(col.scale <span>as</span> <span>varchar</span>(<span>4</span>))
+                      <span>when</span> t.name <span>in</span> (<span>'decimal'</span>, <span>'numeric'</span>) <span>then</span>
+                            <span>cast</span>(col.precision <span>as</span> <span>varchar</span>(<span>4</span>)) + <span>', '</span> +
+                            <span>cast</span>(col.scale <span>as</span> <span>varchar</span>(<span>4</span>))
+                 <span>end</span> + <span>')'</span>, <span>''</span>)        
+            <span>else</span> <span>':'</span> + 
+                 (<span>select</span> c_t.name + 
+                         <span>isnull</span>(<span>'('</span> + 
+                         <span>case</span> <span>when</span> c_t.name <span>in</span> (<span>'binary'</span>, <span>'char'</span>, 
+                                   <span>'nchar'</span>, <span>'varchar'</span>, <span>'nvarchar'</span>, 
+                                   <span>'varbinary'</span>) <span>then</span> 
+                                    <span>case</span> c.max_length 
+                                         <span>when</span> <span>-1</span> <span>then</span> <span>'MAX'</span> 
+                                         <span>else</span>   
+                                              <span>case</span> <span>when</span> t.name <span>in</span> 
+                                                        (<span>'nchar'</span>, 
+                                                        <span>'nvarchar'</span>) <span>then</span> 
+                                                        <span>cast</span>(c.max_length/<span>2</span>
+                                                        <span>as</span> <span>varchar</span>(<span>4</span>))
+                                                   <span>else</span> <span>cast</span>(c.max_length
+                                                        <span>as</span> <span>varchar</span>(<span>4</span>))
+                                              <span>end</span>
+                                    <span>end</span>
+                              <span>when</span> c_t.name <span>in</span> (<span>'datetime2'</span>, 
+                                   <span>'datetimeoffset'</span>, <span>'time'</span>) <span>then</span> 
+                                   <span>cast</span>(c.scale <span>as</span> <span>varchar</span>(<span>4</span>))
+                              <span>when</span> c_t.name <span>in</span> (<span>'decimal'</span>, <span>'numeric'</span>) <span>then</span>
+                                   <span>cast</span>(c.precision <span>as</span> <span>varchar</span>(<span>4</span>)) + <span>', '</span> 
+                                   + <span>cast</span>(c.scale <span>as</span> <span>varchar</span>(<span>4</span>))
+                         <span>end</span> + <span>')'</span>, <span>''</span>) 
+                    <span>from</span> sys.columns <span>as</span> c
+                         <span>inner</span> <span>join</span> sys.types <span>as</span> c_t 
+                             <span>on</span> c.system_type_id = c_t.user_type_id
+                   <span>where</span> c.object_id = col.object_id
+                     <span>and</span> c.column_id = col.column_id
+                     <span>and</span> c.user_type_id = col.user_type_id
                  )
-        end as data_type_ext,
-        case when col.is_nullable = 0 then 'N' 
-             else 'Y' end as nullable,
-        case when def.definition is not null then def.definition 
-             else '' end as default_value,
-        case when pk.column_id is not null then 'PK' 
-             else '' end as primary_key, 
-        case when fk.parent_column_id is not null then 'FK' 
-             else '' end as foreign_key, 
-        case when uk.column_id is not null then 'UK' 
-             else '' end as unique_key,
-        case when ch.check_const is not null then ch.check_const 
-             else '' end as check_contraint,
-        cc.definition as computed_column_definition,
-        ep.value as comments
-   from sys.tables as tab
-        left join sys.columns as col
-            on tab.object_id = col.object_id
-        left join sys.types as t
-            on col.user_type_id = t.user_type_id
-        left join sys.default_constraints as def
-            on def.object_id = col.default_object_id
-        left join (
-                  select index_columns.object_id, 
+        <span>end</span> <span>as</span> data_type_ext,
+        <span>case</span> <span>when</span> col.is_nullable = <span>0</span> <span>then</span> <span>'N'</span> 
+             <span>else</span> <span>'Y'</span> <span>end</span> <span>as</span> nullable,
+        <span>case</span> <span>when</span> def.definition <span>is</span> <span>not</span> <span>null</span> <span>then</span> def.definition 
+             <span>else</span> <span>''</span> <span>end</span> <span>as</span> default_value,
+        <span>case</span> <span>when</span> pk.column_id <span>is</span> <span>not</span> <span>null</span> <span>then</span> <span>'PK'</span> 
+             <span>else</span> <span>''</span> <span>end</span> <span>as</span> primary_key, 
+        <span>case</span> <span>when</span> fk.parent_column_id <span>is</span> <span>not</span> <span>null</span> <span>then</span> <span>'FK'</span> 
+             <span>else</span> <span>''</span> <span>end</span> <span>as</span> foreign_key, 
+        <span>case</span> <span>when</span> uk.column_id <span>is</span> <span>not</span> <span>null</span> <span>then</span> <span>'UK'</span> 
+             <span>else</span> <span>''</span> <span>end</span> <span>as</span> unique_key,
+        <span>case</span> <span>when</span> ch.check_const <span>is</span> <span>not</span> <span>null</span> <span>then</span> ch.check_const 
+             <span>else</span> <span>''</span> <span>end</span> <span>as</span> check_contraint,
+        cc.definition <span>as</span> computed_column_definition,
+        ep.value <span>as</span> comments
+   <span>from</span> sys.tables <span>as</span> tab
+        <span>left</span> <span>join</span> sys.columns <span>as</span> <span>col</span>
+            <span>on</span> tab.object_id = col.object_id
+        <span>left</span> <span>join</span> sys.types <span>as</span> t
+            <span>on</span> col.user_type_id = t.user_type_id
+        <span>left</span> <span>join</span> sys.default_constraints <span>as</span> <span>def</span>
+            <span>on</span> def.object_id = col.default_object_id
+        <span>left</span> <span>join</span> (
+                  <span>select</span> index_columns.object_id, 
                          index_columns.column_id
-                    from sys.index_columns
-                         inner join sys.indexes 
-                             on index_columns.object_id = indexes.object_id
-                            and index_columns.index_id = indexes.index_id
-                   where indexes.is_primary_key = 1
-                  ) as pk 
-            on col.object_id = pk.object_id 
-           and col.column_id = pk.column_id
-        left join (
-                  select fc.parent_column_id, 
+                    <span>from</span> sys.index_columns
+                         <span>inner</span> <span>join</span> sys.indexes 
+                             <span>on</span> index_columns.object_id = indexes.object_id
+                            <span>and</span> index_columns.index_id = indexes.index_id
+                   <span>where</span> indexes.is_primary_key = <span>1</span>
+                  ) <span>as</span> pk 
+            <span>on</span> col.object_id = pk.object_id 
+           <span>and</span> col.column_id = pk.column_id
+        <span>left</span> <span>join</span> (
+                  <span>select</span> fc.parent_column_id, 
                          fc.parent_object_id
-                    from sys.foreign_keys as f 
-                         inner join sys.foreign_key_columns as fc 
-                             on f.object_id = fc.constraint_object_id
-                   group by fc.parent_column_id, fc.parent_object_id
-                  ) as fk
-            on fk.parent_object_id = col.object_id 
-           and fk.parent_column_id = col.column_id    
-        left join (
-                  select c.parent_column_id, 
+                    <span>from</span> sys.foreign_keys <span>as</span> f 
+                         <span>inner</span> <span>join</span> sys.foreign_key_columns <span>as</span> fc 
+                             <span>on</span> f.object_id = fc.constraint_object_id
+                   <span>group</span> <span>by</span> fc.parent_column_id, fc.parent_object_id
+                  ) <span>as</span> fk
+            <span>on</span> fk.parent_object_id = col.object_id 
+           <span>and</span> fk.parent_column_id = col.column_id    
+        <span>left</span> <span>join</span> (
+                  <span>select</span> c.parent_column_id, 
                          c.parent_object_id, 
-                         'Check' check_const
-                    from sys.check_constraints as c
-                   group by c.parent_column_id,
+                         <span>'Check'</span> check_const
+                    <span>from</span> sys.check_constraints <span>as</span> c
+                   <span>group</span> <span>by</span> c.parent_column_id,
                          c.parent_object_id
-                  ) as ch
-            on col.column_id = ch.parent_column_id
-           and col.object_id = ch.parent_object_id
-        left join (
-                  select index_columns.object_id, 
+                  ) <span>as</span> ch
+            <span>on</span> col.column_id = ch.parent_column_id
+           <span>and</span> col.object_id = ch.parent_object_id
+        <span>left</span> <span>join</span> (
+                  <span>select</span> index_columns.object_id, 
                          index_columns.column_id
-                    from sys.index_columns
-                         inner join sys.indexes 
-                             on indexes.index_id = index_columns.index_id
-                            and indexes.object_id = index_columns.object_id
-                    where indexes.is_unique_constraint = 1
-                    group by index_columns.object_id, 
+                    <span>from</span> sys.index_columns
+                         <span>inner</span> <span>join</span> sys.indexes 
+                             <span>on</span> indexes.index_id = index_columns.index_id
+                            <span>and</span> indexes.object_id = index_columns.object_id
+                    <span>where</span> indexes.is_unique_constraint = <span>1</span>
+                    <span>group</span> <span>by</span> index_columns.object_id, 
                           index_columns.column_id
-                  ) as uk
-            on col.column_id = uk.column_id 
-           and col.object_id = uk.object_id
-        left join sys.extended_properties as ep 
-            on tab.object_id = ep.major_id
-           and col.column_id = ep.minor_id
-           and ep.name = 'MS_Description'
-           and ep.class_desc = 'OBJECT_OR_COLUMN'
-        left join sys.computed_columns as cc
-            on tab.object_id = cc.object_id
-           and col.column_id = cc.column_id
-  order by schema_name,
+                  ) <span>as</span> uk
+            <span>on</span> col.column_id = uk.column_id 
+           <span>and</span> col.object_id = uk.object_id
+        <span>left</span> <span>join</span> sys.extended_properties <span>as</span> ep 
+            <span>on</span> tab.object_id = ep.major_id
+           <span>and</span> col.column_id = ep.minor_id
+           <span>and</span> ep.name = <span>'MS_Description'</span>
+           <span>and</span> ep.class_desc = <span>'OBJECT_OR_COLUMN'</span>
+        <span>left</span> <span>join</span> sys.computed_columns <span>as</span> cc
+            <span>on</span> tab.object_id = cc.object_id
+           <span>and</span> col.column_id = cc.column_id
+  <span>order</span> <span>by</span> schema_name,
         table_name, 
         column_name;   
 ```
@@ -281,35 +281,35 @@ This query returns list of tables and their foreign keys.
 ### Query
 
 ```
-select schema_name(tab.schema_id) as table_schema_name,
-       tab.name as table_name,
-       col.name as column_name,
-       fk.name as constraint_name,
-       schema_name(tab_prim.schema_id) as primary_table_schema_name,
-       tab_prim.name as primary_table_name,
-       col_prim.name as primary_table_column, 
-       schema_name(tab.schema_id) + '.' + tab.name + '.' + 
-            col.name + ' = ' + schema_name(tab_prim.schema_id) + '.' + 
-            tab_prim.name + '.' + col_prim.name as join_condition,
-       case
-            when count(*) over (partition by fk.name) &gt; 1 then 'Y'
-            else 'N'
-       end as complex_fk,
-       fkc.constraint_column_id as fk_part
-  from sys.tables as tab
-       inner join sys.foreign_keys as fk
-           on tab.object_id = fk.parent_object_id
-       inner join sys.foreign_key_columns as fkc
-           on fk.object_id = fkc.constraint_object_id
-       inner join sys.columns as col
-           on fkc.parent_object_id = col.object_id
-          and fkc.parent_column_id = col.column_id
-       inner join sys.columns as col_prim
-           on fkc.referenced_object_id = col_prim.object_id
-          and fkc.referenced_column_id = col_prim.column_id
-       inner join sys.tables as tab_prim
-           on fk.referenced_object_id = tab_prim.object_id
- order by table_schema_name,
+<span>select</span> schema_name(tab.schema_id) <span>as</span> table_schema_name,
+       tab.name <span>as</span> table_name,
+       col.name <span>as</span> column_name,
+       fk.name <span>as</span> constraint_name,
+       schema_name(tab_prim.schema_id) <span>as</span> primary_table_schema_name,
+       tab_prim.name <span>as</span> primary_table_name,
+       col_prim.name <span>as</span> primary_table_column, 
+       schema_name(tab.schema_id) + <span>'.'</span> + tab.name + <span>'.'</span> + 
+            col.name + <span>' = '</span> + schema_name(tab_prim.schema_id) + <span>'.'</span> + 
+            tab_prim.name + <span>'.'</span> + col_prim.name <span>as</span> join_condition,
+       <span>case</span>
+            <span>when</span> <span>count</span>(*) <span>over</span> (<span>partition</span> <span>by</span> fk.name) &gt; <span>1</span> <span>then</span> <span>'Y'</span>
+            <span>else</span> <span>'N'</span>
+       <span>end</span> <span>as</span> complex_fk,
+       fkc.constraint_column_id <span>as</span> fk_part
+  <span>from</span> sys.tables <span>as</span> tab
+       <span>inner</span> <span>join</span> sys.foreign_keys <span>as</span> fk
+           <span>on</span> tab.object_id = fk.parent_object_id
+       <span>inner</span> <span>join</span> sys.foreign_key_columns <span>as</span> fkc
+           <span>on</span> fk.object_id = fkc.constraint_object_id
+       <span>inner</span> <span>join</span> sys.columns <span>as</span> <span>col</span>
+           <span>on</span> fkc.parent_object_id = col.object_id
+          <span>and</span> fkc.parent_column_id = col.column_id
+       <span>inner</span> <span>join</span> sys.columns <span>as</span> col_prim
+           <span>on</span> fkc.referenced_object_id = col_prim.object_id
+          <span>and</span> fkc.referenced_column_id = col_prim.column_id
+       <span>inner</span> <span>join</span> sys.tables <span>as</span> tab_prim
+           <span>on</span> fk.referenced_object_id = tab_prim.object_id
+ <span>order</span> <span>by</span> table_schema_name,
        table_name, 
        primary_table_name, 
        fk_part;
@@ -353,79 +353,79 @@ This query returns list of views with their columns.
 ### Query
 
 ```
-select schema_name(v.schema_id) as schema_name,
-       v.name as view_name, 
-       col.name as column_name,
-       t.name as data_type,
+<span>select</span> schema_name(v.schema_id) <span>as</span> schema_name,
+       v.name <span>as</span> view_name, 
+       col.name <span>as</span> column_name,
+       t.name <span>as</span> data_type,
        t.name + 
-       case when t.is_user_defined = 0 then 
-                 isnull('(' + 
-                 case when t.name in ('binary', 'char', 'nchar',
-                           'varchar', 'nvarchar', 'varbinary') then
-                           case col.max_length 
-                                when -1 then 'MAX' 
-                                else 
-                                     case 
-                                         when t.name in ('nchar', 
-                                              'nvarchar') then
-                                              cast(col.max_length/2 
-                                              as varchar(4))
-                                         else cast(col.max_length 
-                                              as varchar(4))
-                                     end
-                           end
-                      when t.name in ('datetime2', 
-                           'datetimeoffset', 'time') then 
-                            cast(col.scale as varchar(4))
-                      when t.name in ('decimal', 'numeric') then 
-                           cast(col.precision as varchar(4)) + ', ' +
-                           cast(col.scale as varchar(4))
-                 end + ')', '')        
-            else ':' +
-                 (select c_t.name + 
-                         isnull('(' + 
-                         case when c_t.name in ('binary', 'char',
-                                   'nchar', 'varchar', 'nvarchar',
-                                   'varbinary') then
-                                   case c.max_length
-                                        when -1 then 'MAX'
-                                        else case when t.name in
-                                                       ('nchar',
-                                                        'nvarchar')
-                                                  then cast(c.max_length/2
-                                                       as varchar(4))
-                                                  else cast(c.max_length
-                                                       as varchar(4))
-                                             end
-                                   end
-                              when c_t.name in ('datetime2', 
-                                   'datetimeoffset', 'time') then
-                                   cast(c.scale as varchar(4))
-                              when c_t.name in ('decimal', 'numeric') then
-                                   cast(c.precision as varchar(4)) +
-                                   ', ' + cast(c.scale as varchar(4))
-                         end + ')', '')
-                    from sys.columns as c
-                         inner join sys.types as c_t 
-                             on c.system_type_id = c_t.user_type_id
-                   where c.object_id = col.object_id
-                     and c.column_id = col.column_id
-                     and c.user_type_id = col.user_type_id
+       <span>case</span> <span>when</span> t.is_user_defined = <span>0</span> <span>then</span> 
+                 <span>isnull</span>(<span>'('</span> + 
+                 <span>case</span> <span>when</span> t.name <span>in</span> (<span>'binary'</span>, <span>'char'</span>, <span>'nchar'</span>,
+                           <span>'varchar'</span>, <span>'nvarchar'</span>, <span>'varbinary'</span>) <span>then</span>
+                           <span>case</span> col.max_length 
+                                <span>when</span> <span>-1</span> <span>then</span> <span>'MAX'</span> 
+                                <span>else</span> 
+                                     <span>case</span> 
+                                         <span>when</span> t.name <span>in</span> (<span>'nchar'</span>, 
+                                              <span>'nvarchar'</span>) <span>then</span>
+                                              <span>cast</span>(col.max_length/<span>2</span> 
+                                              <span>as</span> <span>varchar</span>(<span>4</span>))
+                                         <span>else</span> <span>cast</span>(col.max_length 
+                                              <span>as</span> <span>varchar</span>(<span>4</span>))
+                                     <span>end</span>
+                           <span>end</span>
+                      <span>when</span> t.name <span>in</span> (<span>'datetime2'</span>, 
+                           <span>'datetimeoffset'</span>, <span>'time'</span>) <span>then</span> 
+                            <span>cast</span>(col.scale <span>as</span> <span>varchar</span>(<span>4</span>))
+                      <span>when</span> t.name <span>in</span> (<span>'decimal'</span>, <span>'numeric'</span>) <span>then</span> 
+                           <span>cast</span>(col.precision <span>as</span> <span>varchar</span>(<span>4</span>)) + <span>', '</span> +
+                           <span>cast</span>(col.scale <span>as</span> <span>varchar</span>(<span>4</span>))
+                 <span>end</span> + <span>')'</span>, <span>''</span>)        
+            <span>else</span> <span>':'</span> +
+                 (<span>select</span> c_t.name + 
+                         <span>isnull</span>(<span>'('</span> + 
+                         <span>case</span> <span>when</span> c_t.name <span>in</span> (<span>'binary'</span>, <span>'char'</span>,
+                                   <span>'nchar'</span>, <span>'varchar'</span>, <span>'nvarchar'</span>,
+                                   <span>'varbinary'</span>) <span>then</span>
+                                   <span>case</span> c.max_length
+                                        <span>when</span> <span>-1</span> <span>then</span> <span>'MAX'</span>
+                                        <span>else</span> <span>case</span> <span>when</span> t.name <span>in</span>
+                                                       (<span>'nchar'</span>,
+                                                        <span>'nvarchar'</span>)
+                                                  <span>then</span> <span>cast</span>(c.max_length/<span>2</span>
+                                                       <span>as</span> <span>varchar</span>(<span>4</span>))
+                                                  <span>else</span> <span>cast</span>(c.max_length
+                                                       <span>as</span> <span>varchar</span>(<span>4</span>))
+                                             <span>end</span>
+                                   <span>end</span>
+                              <span>when</span> c_t.name <span>in</span> (<span>'datetime2'</span>, 
+                                   <span>'datetimeoffset'</span>, <span>'time'</span>) <span>then</span>
+                                   <span>cast</span>(c.scale <span>as</span> <span>varchar</span>(<span>4</span>))
+                              <span>when</span> c_t.name <span>in</span> (<span>'decimal'</span>, <span>'numeric'</span>) <span>then</span>
+                                   <span>cast</span>(c.precision <span>as</span> <span>varchar</span>(<span>4</span>)) +
+                                   <span>', '</span> + <span>cast</span>(c.scale <span>as</span> <span>varchar</span>(<span>4</span>))
+                         <span>end</span> + <span>')'</span>, <span>''</span>)
+                    <span>from</span> sys.columns <span>as</span> c
+                         <span>inner</span> <span>join</span> sys.types <span>as</span> c_t 
+                             <span>on</span> c.system_type_id = c_t.user_type_id
+                   <span>where</span> c.object_id = col.object_id
+                     <span>and</span> c.column_id = col.column_id
+                     <span>and</span> c.user_type_id = col.user_type_id
                  ) 
-       end as data_type_ext,
-       case when col.is_nullable = 0 then 'N' else 'Y' end as nullable,
-       ep.value as comments
-  from sys.views as v
-       join sys.columns as col
-           on v.object_id = col.object_id
-       left join sys.types as t
-           on col.user_type_id = t.user_type_id
-       left join sys.extended_properties as ep 
-           on v.object_id = ep.major_id
-          and col.column_id = ep.minor_id
-          and ep.name = 'MS_Description'        
-          and ep.class_desc = 'OBJECT_OR_COLUMN'
- order by schema_name,
+       <span>end</span> <span>as</span> data_type_ext,
+       <span>case</span> <span>when</span> col.is_nullable = <span>0</span> <span>then</span> <span>'N'</span> <span>else</span> <span>'Y'</span> <span>end</span> <span>as</span> nullable,
+       ep.value <span>as</span> comments
+  <span>from</span> sys.views <span>as</span> v
+       <span>join</span> sys.columns <span>as</span> <span>col</span>
+           <span>on</span> v.object_id = col.object_id
+       <span>left</span> <span>join</span> sys.types <span>as</span> t
+           <span>on</span> col.user_type_id = t.user_type_id
+       <span>left</span> <span>join</span> sys.extended_properties <span>as</span> ep 
+           <span>on</span> v.object_id = ep.major_id
+          <span>and</span> col.column_id = ep.minor_id
+          <span>and</span> ep.name = <span>'MS_Description'</span>        
+          <span>and</span> ep.class_desc = <span>'OBJECT_OR_COLUMN'</span>
+ <span>order</span> <span>by</span> schema_name,
        view_name,
        column_name;
 ```
@@ -457,15 +457,15 @@ This query returns list of tables sorted by the number of columns they contain.
 ### Query
 
 ```
-select schema_name(tab.schema_id) as schema_name, 
-       tab.name as table_name, 
-       count(*) as columns
-  from sys.tables as tab
-       inner join sys.columns as col
-           on tab.object_id = col.object_id 
- group by schema_name(tab.schema_id), 
+<span>select</span> schema_name(tab.schema_id) <span>as</span> schema_name, 
+       tab.name <span>as</span> table_name, 
+       <span>count</span>(*) <span>as</span> <span>columns</span>
+  <span>from</span> sys.tables <span>as</span> tab
+       <span>inner</span> <span>join</span> sys.columns <span>as</span> <span>col</span>
+           <span>on</span> tab.object_id = col.object_id 
+ <span>group</span> <span>by</span> schema_name(tab.schema_id), 
        tab.name
- order by count(*) desc;
+ <span>order</span> <span>by</span> <span>count</span>(*) <span>desc</span>;
 ```
 
 ### Rows
