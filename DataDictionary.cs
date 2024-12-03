@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text;
 using CodeMechanic.Async;
 using CodeMechanic.FileSystem;
+using CodeMechanic.RegularExpressions;
 using CodeMechanic.Shargs;
 using CodeMechanic.Types;
 
@@ -22,11 +23,9 @@ public class DataDictionaryService : QueuedService
     private async Task<string[]> GetMarkdownFiles()
     {
         string cwd = Directory.GetCurrentDirectory();
-        var md_files = new Grepper()
-        {
-            RootPath = cwd,
-            FileSearchMask = "*.md"
-        }.GetFileNames().ToArray();
+        var md_files = new Grepper() { RootPath = cwd, FileSearchMask = "*.md" }
+            .GetFileNames()
+            .ToArray();
         return md_files;
     }
 
@@ -36,20 +35,93 @@ public class DataDictionaryService : QueuedService
 
         var md_files = await GetMarkdownFiles();
         var Q = new SerialQueue();
-        var tasks = md_files
-            .Select(file_path => Q.Enqueue(() =>
+        var tasks = md_files.Select(file_path =>
+            Q.Enqueue(() =>
             {
                 Console.WriteLine($"reading file {file_path} ");
                 string text = File.ReadAllText(file_path);
-                string save_file_name = Path.GetFileName(file_path) + "sql";
-                // ..
-                string sql = @"select * from foo";
 
-                new SaveFile(sql).To(cwd, "sql").As(save_file_name);
-            }));
+                if (text.IsEmpty())
+                    return;
+
+                var sql = text.Extract<MarkdownToSqlInfo>(DDPatterns.Query.CompiledRegex)
+                    .Select(md => md.raw_query)
+                    .Aggregate(
+                        new StringBuilder(),
+                        (builder, next) =>
+                        {
+                            builder.AppendLine(next);
+                            return builder;
+                        }
+                    )
+                    .ToString();
+
+                if (sql.IsEmpty())
+                    return;
+
+                var map = new Dictionary<string, string>()
+                {
+                    [@"\s+-\s+"] = "_",
+                    [@"\s+"] = "_",
+                    [@"\("] = "",
+                    [@"\)"] = "",
+                    [@"</?\w+>"] = "",
+                    [@","] = "",
+                    [@"&"] = "and",
+                };
+
+                string save_file_name = $"{Path.GetFileNameWithoutExtension(file_path)}.sql";
+                string save_file_path = save_file_name.AsArray().ReplaceAll(map).FlattenText().ToLowerInvariant();
+
+                new SaveFile(sql).To(cwd, "sql").As(save_file_path);
+            })
+        );
 
         await Task.WhenAll(tasks);
     }
+}
+
+public class DDPatterns : RegexEnumBase
+{
+    public static DDPatterns Query = new DDPatterns(
+        1,
+        @"Query",
+        @"(\#+\s*Query)?\s*`{3}(?<raw_query>(.*\s*)+?)`{3}",
+        "https://regex101.com/r/Aku8Sc/1"
+    );
+
+    protected DDPatterns(int id, string name, string pattern, string uri = "")
+        : base(id, name, pattern, uri)
+    {
+    }
+}
+
+public class MarkdownToSqlInfo
+{
+    public string raw_query { get; set; } = string.Empty;
+}
+
+public static class StringExtensions
+{
+    public static string FlattenText(this IEnumerable<string> lines, string delimiter = " ") =>
+        lines
+            ?.Aggregate(
+                new StringBuilder(),
+                (builder, next) =>
+                {
+                    // builder.AppendFormat("{0}---{1}", next.Trim(), delimiter);
+                    if (delimiter?.Length > 0)
+                        builder.Append(next.Trim() + delimiter);
+                    else
+                    {
+                        builder.AppendLine(next.Trim());
+                    }
+
+                    return builder;
+                }
+            )
+            .RemoveFromEnd(1)
+            .ToString() ?? string.Empty;
 }
 
 public static class Resources

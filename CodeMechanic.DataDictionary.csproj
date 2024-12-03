@@ -11,6 +11,7 @@
     <PackageReference Include="CodeMechanic.Async" Version="1.0.3" />
     <PackageReference Include="CodeMechanic.FileSystem" Version="2.0.5" />
     <PackageReference Include="CodeMechanic.RazorHAT" Version="1.0.0" />
+    <PackageReference Include="CodeMechanic.RegularExpressions" Version="1.0.5" />
     <PackageReference Include="CodeMechanic.Shargs" Version="1.0.4" />
     <PackageReference Include="CodeMechanic.Types" Version="1.0.11" />
   </ItemGroup>
