@@ -71,7 +71,11 @@ public class DataDictionaryService : QueuedService
                 };
 
                 string save_file_name = $"{Path.GetFileNameWithoutExtension(file_path)}.sql";
-                string save_file_path = save_file_name.AsArray().ReplaceAll(map).FlattenText().ToLowerInvariant();
+                string save_file_path = save_file_name
+                    .AsArray()
+                    .ReplaceAll(map)
+                    .FlattenText()
+                    .ToLowerInvariant();
 
                 new SaveFile(sql).To(cwd, ".sql/").As(save_file_path);
             })
@@ -91,9 +95,7 @@ public class DDPatterns : RegexEnumBase
     );
 
     protected DDPatterns(int id, string name, string pattern, string uri = "")
-        : base(id, name, pattern, uri)
-    {
-    }
+        : base(id, name, pattern, uri) { }
 }
 
 public class MarkdownToSqlInfo
