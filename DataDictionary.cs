@@ -73,7 +73,7 @@ public class DataDictionaryService : QueuedService
                 string save_file_name = $"{Path.GetFileNameWithoutExtension(file_path)}.sql";
                 string save_file_path = save_file_name.AsArray().ReplaceAll(map).FlattenText().ToLowerInvariant();
 
-                new SaveFile(sql).To(cwd, "sql").As(save_file_path);
+                new SaveFile(sql).To(cwd, ".sql/").As(save_file_path);
             })
         );
 
