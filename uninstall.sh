@@ -1,1 +1,1 @@
-dotnet tool uninstall -g "$1"
+dotnet tool uninstall -g datadict
