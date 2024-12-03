@@ -95,7 +95,9 @@ public class DDPatterns : RegexEnumBase
     );
 
     protected DDPatterns(int id, string name, string pattern, string uri = "")
-        : base(id, name, pattern, uri) { }
+        : base(id, name, pattern, uri)
+    {
+    }
 }
 
 public class MarkdownToSqlInfo
